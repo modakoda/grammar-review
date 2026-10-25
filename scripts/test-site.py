@@ -189,7 +189,7 @@ class Structure(unittest.TestCase):
 
     def test_theme_and_motion_are_handled(self):
         css = "\n".join(P.styles)
-        self.assertIn("prefers-color-scheme: light", css)
+        self.assertIn("prefers-color-scheme: dark", css)
         self.assertIn("prefers-reduced-motion: reduce", css)
         self.assertIn(":focus-visible", css)
         self.assertIn("--red", css)

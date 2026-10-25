@@ -1,101 +1,99 @@
 #!/usr/bin/env swift
+// Draws the app icon: a bold G with the red squiggle under it, the spellchecker's mark, on a navy tile.
+//
+//   swift scripts/make-icon.swift                  writes App/AppIcon.icns
+//   swift scripts/make-icon.swift OUT.icns         writes it elsewhere
+//   swift scripts/make-icon.swift --png OUT.png N  writes one N×N PNG (the website's icon.png and favicon.png)
 import AppKit
 import Foundation
 
 let scriptURL = URL(fileURLWithPath: CommandLine.arguments[0]).standardizedFileURL
 let root = scriptURL.deletingLastPathComponent().deletingLastPathComponent()
-let output = CommandLine.arguments.count > 1
-    ? URL(fileURLWithPath: CommandLine.arguments[1]).standardizedFileURL
-    : root.appendingPathComponent("App/AppIcon.icns")
 
 func drawIcon(size: CGFloat) {
     let canvas = CGRect(x: 0, y: 0, width: size, height: size)
     NSColor.clear.setFill()
     canvas.fill()
 
+    // macOS icons leave a margin around the tile so the shadow fits in the canvas.
     let inset = size * 100 / 1024
     let body = canvas.insetBy(dx: inset, dy: inset)
     let radius = body.width * 0.225
     let bodyPath = NSBezierPath(roundedRect: body, xRadius: radius, yRadius: radius)
+    let unit = body.width / 824
 
     NSGraphicsContext.saveGraphicsState()
     let shadow = NSShadow()
-    shadow.shadowColor = NSColor.black.withAlphaComponent(0.28)
+    shadow.shadowColor = NSColor.black.withAlphaComponent(0.3)
     shadow.shadowBlurRadius = size * 0.03
     shadow.shadowOffset = NSSize(width: 0, height: -size * 0.012)
     shadow.set()
-    NSColor(calibratedRed: 0.16, green: 0.36, blue: 0.86, alpha: 1).setFill()
+    NSColor(calibratedRed: 0.09, green: 0.12, blue: 0.22, alpha: 1).setFill()
     bodyPath.fill()
     NSGraphicsContext.restoreGraphicsState()
 
     guard let gradient = NSGradient(colors: [
-        NSColor(calibratedRed: 0.18, green: 0.33, blue: 0.92, alpha: 1),
-        NSColor(calibratedRed: 0.10, green: 0.62, blue: 0.78, alpha: 1),
+        NSColor(calibratedRed: 0.17, green: 0.22, blue: 0.38, alpha: 1),
+        NSColor(calibratedRed: 0.07, green: 0.09, blue: 0.19, alpha: 1),
     ]) else { fatalError("Couldn't make the background gradient") }
-    gradient.draw(in: bodyPath, angle: -60)
+    gradient.draw(in: bodyPath, angle: -90)
 
     NSGraphicsContext.saveGraphicsState()
     bodyPath.addClip()
-    guard let highlight = NSGradient(colors: [NSColor.white.withAlphaComponent(0.18), NSColor.white.withAlphaComponent(0)]) else {
+    guard let highlight = NSGradient(colors: [NSColor.white.withAlphaComponent(0.14), NSColor.white.withAlphaComponent(0)]) else {
         fatalError("Couldn't make the highlight gradient")
     }
     highlight.draw(in: CGRect(x: body.minX, y: body.midY, width: body.width, height: body.height / 2), angle: -90)
     NSGraphicsContext.restoreGraphicsState()
 
-    let unit = body.width / 824
-    let lineHeight = 58 * unit
-    let left = body.minX + 150 * unit
-    let lineWidths: [CGFloat] = [524, 420, 300].map { $0 * unit }
-    let tops: [CGFloat] = [610, 470, 330].map { body.minY + $0 * unit }
-    NSColor.white.withAlphaComponent(0.95).setFill()
-    for (width, y) in zip(lineWidths, tops) {
-        NSBezierPath(roundedRect: CGRect(x: left, y: y, width: width, height: lineHeight), xRadius: lineHeight / 2, yRadius: lineHeight / 2).fill()
+    // The letter: a heavy serif G, cream on navy, sitting a little above the middle.
+    guard let font = NSFont(name: "Georgia-Bold", size: 560 * unit) ?? NSFont(name: "Times-Bold", size: 560 * unit) else {
+        fatalError("No serif font for the letter")
     }
+    let letter = NSAttributedString(string: "G", attributes: [
+        .font: font,
+        .foregroundColor: NSColor(calibratedRed: 0.98, green: 0.96, blue: 0.91, alpha: 1),
+    ])
+    let letterSize = letter.size()
+    let letterX = body.midX - letterSize.width / 2 + 4 * unit
+    let baseline = body.minY + 262 * unit
+    let letterY = baseline + font.descender
+    NSGraphicsContext.saveGraphicsState()
+    let letterShadow = NSShadow()
+    letterShadow.shadowColor = NSColor.black.withAlphaComponent(0.22)
+    letterShadow.shadowBlurRadius = 10 * unit
+    letterShadow.shadowOffset = NSSize(width: 0, height: -6 * unit)
+    letterShadow.set()
+    letter.draw(at: CGPoint(x: letterX, y: letterY))
+    NSGraphicsContext.restoreGraphicsState()
 
+    // The red squiggle under it, as under a misspelt word.
     let wave = NSBezierPath()
-    let waveY = tops[1] - 34 * unit
-    let waveStart = left + 90 * unit
-    let waveEnd = left + 360 * unit
-    let step = 30 * unit
+    let waveY = baseline - 86 * unit
+    let waveStart = letterX + 8 * unit
+    let waveEnd = letterX + letterSize.width - 8 * unit
+    // Small sizes get fewer, fatter waves so the squiggle survives at 16 px.
+    let small = size < 64
+    let step = (waveEnd - waveStart) / (small ? 3 : 6)
+    let amplitude = small ? 40 * unit : 24 * unit
     wave.move(to: CGPoint(x: waveStart, y: waveY))
     var x = waveStart
     var up = true
-    while x < waveEnd {
+    while x < waveEnd - 1 {
         let next = min(x + step, waveEnd)
         wave.curve(
             to: CGPoint(x: next, y: waveY),
-            controlPoint1: CGPoint(x: x + step / 3, y: waveY + (up ? 16 : -16) * unit),
-            controlPoint2: CGPoint(x: next - step / 3, y: waveY + (up ? 16 : -16) * unit)
+            controlPoint1: CGPoint(x: x + step / 3, y: waveY + (up ? amplitude : -amplitude)),
+            controlPoint2: CGPoint(x: next - step / 3, y: waveY + (up ? amplitude : -amplitude))
         )
         x = next
         up.toggle()
     }
-    wave.lineWidth = 16 * unit
+    wave.lineWidth = small ? max(30 * unit, size * 0.08) : 30 * unit
     wave.lineCapStyle = .round
-    NSColor(calibratedRed: 1, green: 0.42, blue: 0.40, alpha: 1).setStroke()
+    wave.lineJoinStyle = .round
+    NSColor(calibratedRed: 1, green: 0.30, blue: 0.33, alpha: 1).setStroke()
     wave.stroke()
-
-    let badgeSize = 290 * unit
-    let badge = CGRect(x: body.maxX - badgeSize - 70 * unit, y: body.minY + 70 * unit, width: badgeSize, height: badgeSize)
-    NSGraphicsContext.saveGraphicsState()
-    let badgeShadow = NSShadow()
-    badgeShadow.shadowColor = NSColor.black.withAlphaComponent(0.25)
-    badgeShadow.shadowBlurRadius = 18 * unit
-    badgeShadow.shadowOffset = NSSize(width: 0, height: -6 * unit)
-    badgeShadow.set()
-    NSColor.white.setFill()
-    NSBezierPath(ovalIn: badge).fill()
-    NSGraphicsContext.restoreGraphicsState()
-
-    let check = NSBezierPath()
-    check.move(to: CGPoint(x: badge.minX + badge.width * 0.27, y: badge.minY + badge.height * 0.52))
-    check.line(to: CGPoint(x: badge.minX + badge.width * 0.44, y: badge.minY + badge.height * 0.35))
-    check.line(to: CGPoint(x: badge.minX + badge.width * 0.74, y: badge.minY + badge.height * 0.67))
-    check.lineWidth = 34 * unit
-    check.lineCapStyle = .round
-    check.lineJoinStyle = .round
-    NSColor(calibratedRed: 0.12, green: 0.62, blue: 0.42, alpha: 1).setStroke()
-    check.stroke()
 }
 
 func png(pixels: Int) -> Data {
@@ -123,6 +121,20 @@ func png(pixels: Int) -> Data {
     return data
 }
 
+let arguments = Array(CommandLine.arguments.dropFirst())
+if arguments.first == "--png" {
+    guard arguments.count == 3, let pixels = Int(arguments[2]), pixels > 0 else {
+        FileHandle.standardError.write(Data("usage: make-icon.swift --png OUT.png SIZE\n".utf8))
+        exit(2)
+    }
+    let output = URL(fileURLWithPath: arguments[1]).standardizedFileURL
+    try png(pixels: pixels).write(to: output)
+    print("Wrote \(output.path)")
+    exit(0)
+}
+
+let output = arguments.first.map { URL(fileURLWithPath: $0).standardizedFileURL }
+    ?? root.appendingPathComponent("App/AppIcon.icns")
 let fileManager = FileManager.default
 let workDir = fileManager.temporaryDirectory.appendingPathComponent("grammar-review-icon-\(UUID().uuidString)")
 let iconset = workDir.appendingPathComponent("AppIcon.iconset")
