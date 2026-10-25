@@ -1,10 +1,16 @@
 import AppKit
 import SwiftUI
 
-final class FirstMouseHostingView<Content: View>: NSHostingView<Content> {
+// Not generic, and neither is PopoverWindow that holds one: Swift 6.3's optimizer crashes on the
+// deinit of a generic class around a hosting view in release builds (signal 11 in EarlyPerfInliner).
+final class FirstMouseHostingView: NSHostingView<AnyView> {
     var contextMenu: (() -> NSMenu?)?
 
-    required init(rootView: Content) {
+    convenience init(rootView: some View) {
+        self.init(rootView: AnyView(rootView))
+    }
+
+    required init(rootView: AnyView) {
         super.init(rootView: rootView)
         sizingOptions = [.intrinsicContentSize]
         for orientation in [NSLayoutConstraint.Orientation.horizontal, .vertical] {

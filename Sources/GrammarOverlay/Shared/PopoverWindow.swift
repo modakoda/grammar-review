@@ -1,12 +1,12 @@
 import AppKit
 import SwiftUI
 
-final class PopoverWindow<Content: View> {
+final class PopoverWindow {
     let panel: OverlayPanel
-    let host: FirstMouseHostingView<Content>
+    let host: FirstMouseHostingView
     private var measuredSize: CGSize?
 
-    init(content: Content, acceptsKeyboard: Bool = false) {
+    init(content: some View, acceptsKeyboard: Bool = false) {
         panel = OverlayPanel(level: OverlayLevel.popover, hasShadow: true, acceptsKeyboard: acceptsKeyboard)
         let background = MaterialBackgroundView()
         host = FirstMouseHostingView(rootView: content)

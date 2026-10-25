@@ -4,7 +4,7 @@ import GrammarModels
 final class RewriteCardPresenter {
     private let model = RewriteModel()
     private let actions: OverlayActions
-    private var window: PopoverWindow<RewriteCardView>?
+    private var window: PopoverWindow?
 
     init(actions: OverlayActions) {
         self.actions = actions
@@ -40,7 +40,7 @@ final class RewriteCardPresenter {
         window?.panel.giveUpKeyboard()
     }
 
-    private func ensureWindow() -> PopoverWindow<RewriteCardView> {
+    private func ensureWindow() -> PopoverWindow {
         if let window { return window }
         let window = PopoverWindow(content: RewriteCardView(model: model, actions: actions), acceptsKeyboard: true)
         self.window = window

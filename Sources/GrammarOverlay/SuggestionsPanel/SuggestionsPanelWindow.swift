@@ -5,9 +5,9 @@ final class SuggestionsPanelWindow {
     let panel = OverlayPanel(level: OverlayLevel.popover, hasShadow: true)
     private let model: PanelModel
     private let background = MaterialBackgroundView()
-    private let header: FirstMouseHostingView<PanelHeaderView>
-    private let rows: FirstMouseHostingView<PanelRowsView>
-    private let footer: FirstMouseHostingView<PanelFooterView>
+    private let header: FirstMouseHostingView
+    private let rows: FirstMouseHostingView
+    private let footer: FirstMouseHostingView
     private let scrollView = NSScrollView()
     private var measured: (header: CGFloat, rows: CGFloat, footer: CGFloat)?
     private var lastLayout: (anchor: CGRect, alignment: PopoverAlignment, screens: [ScreenLayout])?

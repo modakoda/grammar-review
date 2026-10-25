@@ -4,7 +4,7 @@ import GrammarModels
 final class ComposeCardPresenter {
     private let model = ComposeModel()
     private let actions: OverlayActions
-    private var window: PopoverWindow<ComposeCardView>?
+    private var window: PopoverWindow?
 
     init(actions: OverlayActions) {
         self.actions = actions
@@ -32,7 +32,7 @@ final class ComposeCardPresenter {
         panel.dismiss(animated: false)
     }
 
-    private func ensureWindow() -> PopoverWindow<ComposeCardView> {
+    private func ensureWindow() -> PopoverWindow {
         if let window { return window }
         let window = PopoverWindow(content: ComposeCardView(model: model, actions: actions), acceptsKeyboard: true)
         self.window = window
