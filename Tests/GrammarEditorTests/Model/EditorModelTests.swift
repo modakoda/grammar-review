@@ -440,6 +440,44 @@ extension EditorModelTests {
     }
 }
 
+extension EditorModelTests {
+    @Test func plagiarismMatchesAreHighlightedOnlyInTheirTab() async throws {
+        let harness = Harness()
+        let text = "We hold these truths to be self-evident, that all men are created equal. Mine."
+        harness.type(text)
+        harness.model.sidebarTab = .plagiarism
+        harness.model.checkPlagiarism()
+        try await waitUntil { harness.surface.decorations.last?.plagiarism.isEmpty == false }
+
+        let passage = NSRange(location: 0, length: 72)
+        #expect(harness.surface.decorations.last?.plagiarism == [passage])
+        let source = try #require(harness.plagiarism.lastReport?.sources.first)
+        harness.model.revealPlagiarism(source)
+        #expect(harness.surface.revealed.last == passage)
+        #expect(harness.surface.decorations.last?.selectedPlagiarism == [passage])
+
+        harness.model.sidebarTab = .suggestions
+        #expect(harness.surface.decorations.last?.plagiarism.isEmpty == true)
+        harness.model.openPlagiarismSettings()
+        #expect(harness.openedPlagiarismSettings == 1)
+    }
+
+    @Test func editingInsideAMatchDropsItsHighlight() async throws {
+        let harness = Harness()
+        let text = "Intro. We hold these truths to be self-evident, that all men are created equal."
+        harness.type(text)
+        harness.model.sidebarTab = .plagiarism
+        harness.model.checkPlagiarism()
+        try await waitUntil { harness.model.plagiarism.matches.count == 1 }
+
+        harness.type("A longer intro. " + text.dropFirst(7))
+        #expect(harness.model.plagiarism.matches == [NSRange(location: 16, length: 72)])
+        #expect(harness.model.plagiarism.isStale)
+        harness.type("A longer intro. We hold these truths to be obvious, that all men are created equal.")
+        #expect(harness.model.plagiarism.matches.isEmpty)
+    }
+}
+
 private extension ToneState {
     var isReady: Bool {
         if case .ready = self { true } else { false }
@@ -452,12 +490,14 @@ private final class Harness {
     let rewriter = FakeRewriter()
     let toneDetector = FakeToneDetector()
     let composer = FakeComposer()
+    let plagiarism = FakePlagiarismChecker()
     let surface = FakeSurface()
     let model: EditorModel
     private let recorder = Recorder()
 
     var savedGoals: [WritingGoals] { recorder.savedGoals }
     var dictionary: [String] { recorder.dictionary }
+    var openedPlagiarismSettings: Int { recorder.openedPlagiarismSettings }
 
     init(style: WritingStyle = .neutral, aiStatus: AIStatus = .completed, typingSettle: Duration = .zero, aiEnabled: Bool = true) {
         checker = FakeChecker(aiStatus: aiStatus)
@@ -470,10 +510,12 @@ private final class Harness {
             rewriter: rewriter,
             toneDetector: toneDetector,
             composer: composer,
+            plagiarism: plagiarism,
             settings: { settings },
             saveGoals: { recorder.savedGoals.append($0) },
             addToDictionary: { recorder.dictionary.append($0) },
-            openSettings: {}
+            openSettings: {},
+            openPlagiarismSettings: { recorder.openedPlagiarismSettings += 1 }
         )
         model = EditorModel(services: services, checkDebounce: .zero, typingSettle: typingSettle, toneDebounce: .zero)
         surface.model = model
@@ -491,6 +533,7 @@ private final class Harness {
 private final class Recorder {
     var savedGoals: [WritingGoals] = []
     var dictionary: [String] = []
+    var openedPlagiarismSettings = 0
 }
 
 @MainActor
@@ -600,7 +643,7 @@ final class FakeToneDetector: ToneDetecting, @unchecked Sendable {
 }
 
 @MainActor
-private func waitUntil(_ condition: () -> Bool, sourceLocation: SourceLocation = #_sourceLocation) async throws {
+func waitUntil(_ condition: () -> Bool, sourceLocation: SourceLocation = #_sourceLocation) async throws {
     let deadline = ContinuousClock.now + .seconds(5)
     while !condition() {
         guard ContinuousClock.now < deadline else {

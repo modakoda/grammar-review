@@ -11,6 +11,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let usage = UsageStore()
     private let engine = HybridGrammarEngine(apiKeys: { KeychainStore.apiKey(for: $0) })
     private let editorEngine = HybridGrammarEngine(apiKeys: { KeychainStore.apiKey(for: $0) })
+    private let plagiarism = PlagiarismChecker(apiKey: { KeychainStore.webSearchAPIKey() })
     private let tracker = AccessibilityFocusTracker()
     private let overlay = OverlayController()
     private let hotkeys = HotkeyManager()
@@ -112,6 +113,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     listModels: { [engine] service, key in try await engine.cloudModels(for: service, apiKey: key) },
                     testModel: { [engine] service, model, key in try await engine.testCloudModel(model, service: service, apiKey: key) }
                 ),
+                harper: HarperSetupClient(installation: { [engine] path in await engine.harperInstallation(customPath: path) }),
+                validateWebSearchKey: { [plagiarism] key in try await plagiarism.validateKey(key) },
                 updater: updater
             )
         }
@@ -125,10 +128,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 rewriter: editorEngine,
                 toneDetector: editorEngine,
                 composer: editorEngine,
+                plagiarism: plagiarism,
                 settings: { [settingsStore] in settingsStore.settings },
                 saveGoals: { [settingsStore] goals in settingsStore.update { $0.editorGoals = goals } },
                 addToDictionary: { [settingsStore] word in settingsStore.addToDictionary(word) },
-                openSettings: { [weak self] in self?.showSettings(tab: .ai) }
+                openSettings: { [weak self] in self?.showSettings(tab: .ai) },
+                openPlagiarismSettings: { [weak self] in self?.showSettings(tab: .plagiarism) }
             ))
         }
         editorWindow?.show()

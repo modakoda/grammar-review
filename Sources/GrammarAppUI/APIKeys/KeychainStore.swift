@@ -7,6 +7,8 @@ nonisolated public enum KeychainStore {
     public static let service = "com.grammarreview.app"
     public static let account = "anthropic-api-key"
     public static let environmentVariable = "ANTHROPIC_API_KEY"
+    public static let webSearchAccount = "brave-search-api-key"
+    public static let webSearchEnvironmentVariable = "BRAVE_SEARCH_API_KEY"
 
     public static func account(for provider: AIProvider) -> String {
         switch provider {
@@ -22,6 +24,10 @@ nonisolated public enum KeychainStore {
 
     public static func apiKey(for provider: AIProvider) -> String? {
         APIKeyStore.store(for: provider).apiKey()
+    }
+
+    public static func webSearchAPIKey() -> String? {
+        APIKeyStore.webSearch.apiKey()
     }
 
     public static func setAPIKey(_ key: String?) throws {

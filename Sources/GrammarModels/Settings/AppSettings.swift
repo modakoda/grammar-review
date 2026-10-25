@@ -16,6 +16,8 @@ public struct AppSettings: Codable, Sendable, Equatable {
     public var disabledBundleIDs: Set<String> = AppSettings.defaultDisabledBundleIDs
     public var personalDictionary: Set<String> = []
     public var styleGuide: [StyleRule] = []
+    public var harperEnabled = true
+    public var harperPath = ""
     public var showBadge = true
     public var inputBadgePlacement: BadgePlacement = .automatic
     public var textAreaBadgePlacement: BadgePlacement = .automatic
@@ -99,7 +101,7 @@ public struct AppSettings: Codable, Sendable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case isEnabled, pausedUntil, aiEnabled, aiProvider, aiModel, localServerURL, localModel, cloudModels
         case aiDelay, maxAICharacters, languageMode
-        case enabledCategories, disabledBundleIDs, personalDictionary, styleGuide
+        case enabledCategories, disabledBundleIDs, personalDictionary, styleGuide, harperEnabled, harperPath
         case showBadge, inputBadgePlacement, textAreaBadgePlacement, badgeSpacing
         case editorGoals, appGoals, launchAtLogin, hasCompletedOnboarding
     }
@@ -127,6 +129,8 @@ public struct AppSettings: Codable, Sendable, Equatable {
         disabledBundleIDs = try c.decodeIfPresent(Set<String>.self, forKey: .disabledBundleIDs) ?? d.disabledBundleIDs
         personalDictionary = try c.decodeIfPresent(Set<String>.self, forKey: .personalDictionary) ?? d.personalDictionary
         styleGuide = (try? c.decodeIfPresent([StyleRule].self, forKey: .styleGuide)) ?? d.styleGuide
+        harperEnabled = try c.decodeIfPresent(Bool.self, forKey: .harperEnabled) ?? d.harperEnabled
+        harperPath = try c.decodeIfPresent(String.self, forKey: .harperPath) ?? d.harperPath
         showBadge = try c.decodeIfPresent(Bool.self, forKey: .showBadge) ?? d.showBadge
         let legacy = try decoder.container(keyedBy: LegacyKeys.self)
         let sharedPlacement = (try? legacy.decodeIfPresent(BadgePlacement.self, forKey: .badgePlacement)) ?? nil

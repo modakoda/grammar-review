@@ -19,6 +19,7 @@ struct EditorSidebar: View {
             switch model.sidebarTab {
             case .suggestions: suggestions
             case .insights: InsightsView(model: model)
+            case .plagiarism: PlagiarismView(model: model)
             }
         }
         .background(Color(nsColor: .windowBackgroundColor))

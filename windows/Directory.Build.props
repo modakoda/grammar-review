@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <!-- Lets the Windows app build (not run) on macOS and Linux. -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <Company>Grammar Review</Company>
+    <Product>Grammar Review</Product>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+</Project>

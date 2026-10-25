@@ -10,7 +10,8 @@ struct CloudServiceSection: View {
 
     var body: some View {
         Section("\(service.name) API key") {
-            APIKeyEditor(model: model.keyModel, modelID: store.settings.cloudModel(for: service), keyHint: service.keyHint)
+            APIKeyEditor(model: model.keyModel, modelID: store.settings.cloudModel(for: service), keyHint: service.keyHint,
+                         environmentVariable: service.environmentVariable)
             Link("Get an API key at \(service.consoleURL.host() ?? service.consoleURL.absoluteString)", destination: service.consoleURL)
                 .font(.callout)
         }

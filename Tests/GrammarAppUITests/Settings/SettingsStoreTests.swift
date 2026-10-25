@@ -33,6 +33,8 @@ import Testing
                 $0.disabledBundleIDs = ["com.example.app"]
                 $0.personalDictionary = ["Kažinauskas", "SwiftUI"]
                 $0.styleGuide = [StyleRule(term: "utilize", replacement: "use", note: "Plain words.", matchCase: true)]
+                $0.harperEnabled = false
+                $0.harperPath = "~/bin/harper-ls"
                 $0.showBadge = false
                 $0.inputBadgePlacement = .below
                 $0.textAreaBadgePlacement = .insideTopLeft

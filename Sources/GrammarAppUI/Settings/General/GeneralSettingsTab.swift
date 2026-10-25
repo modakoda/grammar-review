@@ -4,6 +4,7 @@ import SwiftUI
 
 struct GeneralSettingsTab: View {
     @Bindable var store: SettingsStore
+    let harper: HarperModel
     let updater: (any AppUpdater)?
     @ViewState private var loginError: String?
     @ViewState private var loginNeedsApproval = false
@@ -41,6 +42,7 @@ struct GeneralSettingsTab: View {
                 }
             }
 
+            HarperSection(store: store, harper: harper)
             BadgeSettingsSection(store: store)
             SuggestionTypesSection(store: store)
         }

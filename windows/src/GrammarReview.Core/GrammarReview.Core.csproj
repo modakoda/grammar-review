@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>GrammarReview.Core</RootNamespace>
+    <!-- The Windows app's, so its lock file fits both a plain restore and a Windows publish. -->
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="GrammarReview.Core.Tests" />
+  </ItemGroup>
+</Project>

@@ -23,13 +23,13 @@ fi
 status=0
 echo "==> Gitleaks (secrets in the commit history)"
 gitleaks git . --redact --no-banner || status=1
-echo "==> OSV-Scanner (known vulnerabilities in Package.resolved and site/tests/package-lock.json)"
+echo "==> OSV-Scanner (known vulnerabilities in Package.resolved, site/tests/package-lock.json and the Windows packages.lock.json files)"
 osv-scanner scan source --recursive . || status=1
 echo "==> zizmor (GitHub Actions workflows)"
 zizmor ${zizmor_format[@]+"${zizmor_format[@]}"} .github/workflows || status=1
-echo "==> Semgrep (Swift, Python and hard-coded secrets)"
+echo "==> Semgrep (Swift, Python, C# and hard-coded secrets)"
 semgrep scan --metrics=off --error --quiet \
-  --config p/swift --config p/python --config p/secrets "${semgrep_excludes[@]}" || status=1
+  --config p/swift --config p/python --config p/csharp --config p/secrets "${semgrep_excludes[@]}" || status=1
 
 if ((status != 0)); then
   echo "Security checks failed: fix the problems above." >&2

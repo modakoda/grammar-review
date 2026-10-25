@@ -15,6 +15,12 @@ nonisolated final class APIKeyStore: Sendable {
         environment: { ProcessInfo.processInfo.environment }
     )
 
+    static let webSearch = APIKeyStore(
+        backend: KeychainBackend(service: KeychainStore.service, account: KeychainStore.webSearchAccount, label: "Brave Search"),
+        environment: { ProcessInfo.processInfo.environment },
+        environmentVariable: KeychainStore.webSearchEnvironmentVariable
+    )
+
     private static let stores = OSAllocatedUnfairLock<[String: APIKeyStore]>(initialState: [:])
 
     static func store(for provider: AIProvider) -> APIKeyStore {
@@ -38,6 +44,7 @@ nonisolated final class APIKeyStore: Sendable {
 
     static func invalidateAllCaches() {
         shared.invalidateCache()
+        webSearch.invalidateCache()
         for store in stores.withLock({ Array($0.values) }) { store.invalidateCache() }
     }
 

@@ -3,6 +3,7 @@ import GrammarModels
 
 enum APIKeyMessages {
     static func message(for error: any Error) -> String {
+        if let error = error as? PlagiarismError { return error.message }
         switch error as? RewriteError {
         case .missingAPIKey:
             return "Enter an API key first."
@@ -23,10 +24,10 @@ enum APIKeyMessages {
         return "The key works with \(name)."
     }
 
-    static func sourceDescription(_ source: APIKeySource) -> String {
+    static func sourceDescription(_ source: APIKeySource, environmentVariable: String = KeychainStore.environmentVariable) -> String {
         switch source {
         case .keychain: "A key is saved in your Keychain."
-        case .environment: "Using the ANTHROPIC_API_KEY environment variable."
+        case .environment: "Using the \(environmentVariable) environment variable."
         case .none: "No key saved. Only local spelling checks run."
         }
     }

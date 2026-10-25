@@ -18,6 +18,17 @@ import Testing
         #expect(APIKeyMessages.message(for: error) == error.localizedDescription)
     }
 
+    @Test func plagiarismErrorsUseTheirOwnMessage() {
+        #expect(APIKeyMessages.message(for: PlagiarismError.invalidAPIKey) == PlagiarismError.invalidAPIKey.message)
+        #expect(APIKeyMessages.message(for: PlagiarismError.failed("Brave Search: nope")) == "Brave Search: nope")
+    }
+
+    @Test func theEnvironmentVariableIsNamed() {
+        #expect(APIKeyMessages.sourceDescription(.environment) == "Using the ANTHROPIC_API_KEY environment variable.")
+        #expect(APIKeyMessages.sourceDescription(.environment, environmentVariable: "BRAVE_SEARCH_API_KEY")
+            == "Using the BRAVE_SEARCH_API_KEY environment variable.")
+    }
+
     @Test func successNamesTheModel() {
         #expect(APIKeyMessages.success(model: "claude-haiku-5-5") == "The key works with Claude Haiku 5.5.")
         #expect(APIKeyMessages.success(model: "custom-model") == "The key works with custom-model.")

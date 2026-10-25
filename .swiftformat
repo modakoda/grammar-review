@@ -4,7 +4,7 @@
 
 --swift-version 6.2
 --min-version 0.64.0
---exclude .build,.build-*,.swiftpm,build,.claude,site,docs
+--exclude .build,.build-*,.swiftpm,build,.claude,site,windows
 
 --indent 4
 --max-width none

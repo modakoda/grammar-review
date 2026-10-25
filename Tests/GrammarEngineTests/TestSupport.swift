@@ -197,7 +197,8 @@ func makeEngine(
     spell: MockSpellChecker = MockSpellChecker(),
     key: String? = "sk-test",
     keyCalledOnMain: Flag? = nil,
-    keyboard: KeyboardLanguages = KeyboardLanguages()
+    keyboard: KeyboardLanguages = KeyboardLanguages(),
+    harper: (any HarperLinting)? = nil
 ) -> HybridGrammarEngine {
     HybridGrammarEngine(
         apiKeyProvider: { _ in
@@ -205,6 +206,8 @@ func makeEngine(
             return key
         },
         spellChecker: spell,
+        harper: harper,
+        harperLocator: HarperLocator(environment: [:], home: "/Users/test", isExecutable: { $0 == "/opt/homebrew/bin/harper-ls" }),
         aiService: ai,
         backends: AIBackends(
             claude: ClaudeClient(baseURL: URL(string: "https://unused.invalid")!, retryDelay: .zero),

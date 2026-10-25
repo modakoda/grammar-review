@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/GrammarReview.Core/GrammarReview.Core.csproj" />
+    <Project Path="src/GrammarReview.Windows/GrammarReview.Windows.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/GrammarReview.Core.Tests/GrammarReview.Core.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -25,6 +25,7 @@ final class EditorModel {
 
     private(set) var tone: ToneState = .unavailable(ToneSession.needsTextMessage)
     private(set) var isDetectingTone = false
+    @ObservationIgnored let plagiarism: PlagiarismSession
     @ObservationIgnored private let toneSession: ToneSession
     @ObservationIgnored private let toneDebounce: Duration
 
@@ -57,12 +58,14 @@ final class EditorModel {
         rewriter = EditorRewriter(rewriter: services.rewriter, settings: services.settings)
         composer = EditorComposer(composer: services.composer, settings: services.settings)
         toneSession = ToneSession(detector: services.toneDetector)
+        plagiarism = PlagiarismSession(checker: services.plagiarism)
         goals = services.settings().editorGoals
         toneSession.onChange = { [weak self] in
             guard let self else { return }
             self.tone = self.toneSession.state
             self.isDetectingTone = self.toneSession.isDetecting
         }
+        plagiarism.onChange = { [weak self] in self?.redecorate() }
     }
 
     var issues: [TextIssue] { issueList.issues }
@@ -106,6 +109,7 @@ final class EditorModel {
         selection = newSelection
         guard newText != text else { return }
         issueList.rebase(from: text, to: newText)
+        plagiarism.textDidChange(from: text, to: newText)
         text = newText
         statistics = TextStatistics(text: newText, language: language)
         if !isApplyingEdit { markTyping() }
@@ -189,6 +193,23 @@ final class EditorModel {
         scheduleCheck(after: .zero)
         toneSession.invalidate()
         if sidebarTab == .insights { scheduleToneDetection(after: .zero) }
+    }
+
+    func checkPlagiarism() {
+        plagiarism.check(text)
+    }
+
+    func revealPlagiarism(_ source: PlagiarismSource) {
+        plagiarism.select(source)
+        guard let first = plagiarism.ranges(of: source).first else {
+            NSSound.beep()
+            return
+        }
+        surface?.reveal(first)
+    }
+
+    func openPlagiarismSettings() {
+        services.openPlagiarismSettings()
     }
 
     func revealLongSentence(at index: Int) {
@@ -376,7 +397,9 @@ final class EditorModel {
             underlines: visibleIssues.map { EditorDecorations.Underline(range: $0.range, severity: $0.category.severity) },
             active: issueList.selected?.range,
             rewriteTarget: rewrite?.range ?? compose.flatMap { $0.range.length > 0 ? $0.range : nil },
-            longSentences: sidebarTab == .insights ? statistics.longSentences : []
+            longSentences: sidebarTab == .insights ? statistics.longSentences : [],
+            plagiarism: sidebarTab == .plagiarism ? plagiarism.matches : [],
+            selectedPlagiarism: sidebarTab == .plagiarism ? plagiarism.selectedRanges : []
         )
         guard decorations != lastDecorations, let surface else { return }
         lastDecorations = decorations

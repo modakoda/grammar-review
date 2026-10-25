@@ -9,3 +9,5 @@ DerivedData/
 site/tests/node_modules/
 site/tests/test-results/
 site/tests/playwright-report/
+windows/**/bin/
+windows/**/obj/

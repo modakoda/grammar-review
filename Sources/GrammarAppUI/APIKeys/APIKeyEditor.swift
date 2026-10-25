@@ -5,6 +5,8 @@ struct APIKeyEditor: View {
     var modelID: String
     var keyHint = "sk-ant-…"
     var showsRemove = true
+    var environmentVariable = KeychainStore.environmentVariable
+    var missingKeyText: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -19,7 +21,8 @@ struct APIKeyEditor: View {
                     .disabled(!model.canTest || model.isTesting)
             }
             HStack(spacing: 6) {
-                Text(APIKeyMessages.sourceDescription(model.source))
+                Text(model.source == .none ? missingKeyText ?? APIKeyMessages.sourceDescription(.none)
+                    : APIKeyMessages.sourceDescription(model.source, environmentVariable: environmentVariable))
                     .foregroundStyle(.secondary)
                 if showsRemove, model.source == .keychain {
                     Button("Remove Key", role: .destructive) { model.remove() }

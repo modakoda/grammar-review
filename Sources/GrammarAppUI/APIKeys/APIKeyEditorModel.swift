@@ -23,10 +23,12 @@ final class APIKeyEditorModel {
 
     @ObservationIgnored private let keyStore: APIKeyStore
     @ObservationIgnored private let validate: APIKeyValidator
+    @ObservationIgnored private let success: @MainActor (String) -> String
     @ObservationIgnored private(set) var testTask: Task<Void, Never>?
 
-    init(keyStore: APIKeyStore = .shared, validate: @escaping APIKeyValidator) {
+    init(keyStore: APIKeyStore = .shared, success: @escaping @MainActor (String) -> String = { APIKeyMessages.success(model: $0) }, validate: @escaping APIKeyValidator) {
         self.keyStore = keyStore
+        self.success = success
         self.validate = validate
         source = keyStore.source()
     }
@@ -80,11 +82,12 @@ final class APIKeyEditorModel {
         }
         testState = .testing
         let validate = validate
+        let succeeded = success(model)
         testTask = Task { [weak self] in
             let outcome: APIKeyTestState
             do {
                 try await validate(key, model)
-                outcome = .succeeded(APIKeyMessages.success(model: model))
+                outcome = .succeeded(succeeded)
             } catch {
                 outcome = .failed(APIKeyMessages.message(for: error))
             }

@@ -1,5 +1,5 @@
-# Lints, builds (debug and release) and tests the app on every push to main and every pull request.
-# The website and its scripts have their own workflow, site.yml.
+# Lints, builds (debug and release) and tests the app on every push to main and every pull request,
+# and builds and tests the Windows version. The website and its scripts have their own workflow, site.yml.
 name: CI
 
 on:
@@ -44,6 +44,9 @@ jobs:
           persist-credentials: false
       - name: Show toolchain
         run: swift --version
+      # The offline grammar checker the Harper tests talk to; without it they're skipped.
+      - name: Install Harper
+        run: brew install harper
       - name: Build (warnings are errors)
         run: swift build --build-tests -Xswiftc -warnings-as-errors
       - name: Test
@@ -75,3 +78,35 @@ jobs:
       - name: Build (release)
         if: ${{ !cancelled() }}
         run: swift build -c release --product GrammarReview
+
+  windows:
+    name: Windows build and test
+    runs-on: windows-2025
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      DOTNET_NOLOGO: "1"
+      TESTINGPLATFORM_TELEMETRY_OPTOUT: "1"
+    defaults:
+      run:
+        working-directory: windows
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: windows/global.json
+      - name: Restore (from the lock files)
+        run: dotnet restore GrammarReview.Windows.slnx --locked-mode
+      - name: Build (warnings are errors)
+        run: dotnet build GrammarReview.Windows.slnx --configuration Release --no-restore
+      - name: Test
+        run: dotnet test --project tests/GrammarReview.Core.Tests --configuration Release --no-build
+      - name: Publish
+        run: dotnet publish src/GrammarReview.Windows --configuration Release --runtime win-x64 --self-contained --output publish
+      # Not a release: a build to try on Windows, kept for a week.
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: Grammar-Review-Windows-x64
+          path: windows/publish
+          retention-days: 7

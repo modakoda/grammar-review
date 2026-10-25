@@ -16,13 +16,15 @@ struct SettingsView: View {
     let keyModel: APIKeyEditorModel
     let localServer: LocalServerModel
     let cloudServices: CloudServiceModels
+    let harper: HarperModel
+    let webSearchKey: APIKeyEditorModel
     let usage: UsageStore
     let catalog: AppCatalog
     let updater: (any AppUpdater)?
 
     var body: some View {
         TabView(selection: $navigation.selection) {
-            GeneralSettingsTab(store: store, updater: updater)
+            GeneralSettingsTab(store: store, harper: harper, updater: updater)
                 .tabItem { Label("General", systemImage: "gearshape") }
                 .tag(SettingsTab.general)
             AISettingsTab(store: store, keyModel: keyModel, localServer: localServer, cloudServices: cloudServices, usage: usage)
@@ -43,6 +45,9 @@ struct SettingsView: View {
             DictionarySettingsTab(store: store)
                 .tabItem { Label("Dictionary", systemImage: "character.book.closed") }
                 .tag(SettingsTab.dictionary)
+            PlagiarismSettingsTab(keyModel: webSearchKey)
+                .tabItem { Label("Plagiarism", systemImage: "doc.on.doc") }
+                .tag(SettingsTab.plagiarism)
             AboutSettingsTab()
                 .tabItem { Label("About", systemImage: "info.circle") }
                 .tag(SettingsTab.about)

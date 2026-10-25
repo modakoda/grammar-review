@@ -5,6 +5,7 @@ struct CheckPipeline: Sendable {
     static let maxConcurrentRequests = 3
 
     let spellChecker: any SpellChecking
+    let harper: HarperChecker
     let aiService: any GrammarAIService
     let cache: EditCache
     let endpoints: EndpointResolver
@@ -42,9 +43,10 @@ struct CheckPipeline: Sendable {
     }
 
     private func localIssues(in text: String, language: String?, resolver: LanguageResolver, settings: AppSettings) async -> [TextIssue] {
-        await spellChecker.misspellings(in: text, language: language, resolver: resolver, settings: settings)
+        let found = await spellChecker.misspellings(in: text, language: language, resolver: resolver, settings: settings)
             + ConsistencyChecker.issues(in: text, language: language)
             + StyleGuideChecker.issues(in: text, rules: settings.styleGuide)
+        return found + (await harper.issues(in: text, language: language, resolver: resolver, settings: settings, excluding: found))
     }
 
     private static func aiPlan(

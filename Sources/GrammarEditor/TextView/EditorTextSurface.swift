@@ -18,4 +18,6 @@ struct EditorDecorations: Equatable {
     var active: NSRange?
     var rewriteTarget: NSRange?
     var longSentences: [NSRange] = []
+    var plagiarism: [NSRange] = []
+    var selectedPlagiarism: [NSRange] = []
 }

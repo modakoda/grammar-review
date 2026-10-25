@@ -79,6 +79,12 @@ final class EditorTextView: NSTextView, EditorTextSurface {
                 .backgroundColor, value: NSColor.systemYellow.withAlphaComponent(0.2), forCharacterRange: sentence
             )
         }
+        for passage in decorations.plagiarism where valid(passage) {
+            let alpha = decorations.selectedPlagiarism.contains(passage) ? 0.4 : 0.18
+            layoutManager.addTemporaryAttribute(
+                .backgroundColor, value: NSColor.systemTeal.withAlphaComponent(alpha), forCharacterRange: passage
+            )
+        }
         if let target = decorations.rewriteTarget, valid(target) {
             layoutManager.addTemporaryAttribute(
                 .backgroundColor, value: NSColor.controlAccentColor.withAlphaComponent(0.12), forCharacterRange: target

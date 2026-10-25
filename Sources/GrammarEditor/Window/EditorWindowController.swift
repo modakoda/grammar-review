@@ -24,6 +24,7 @@ public final class EditorWindowController: NSObject, NSWindowDelegate {
     public func windowWillClose(_ notification: Notification) {
         model.cancelRewrite()
         model.cancelCompose()
+        model.plagiarism.cancel()
         model.sidebarTab = .suggestions
         NSApp.setActivationPolicy(.accessory)
     }

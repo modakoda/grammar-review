@@ -18,7 +18,11 @@ public final class HybridGrammarEngine: GrammarChecking, TextRewriting, ToneDete
     }
 
     public convenience init(apiKeys: @escaping @Sendable (AIProvider) -> String?) {
-        self.init(apiKeyProvider: apiKeys, backends: AIBackends(claude: ClaudeClient(), local: ChatCompletionsClient()))
+        self.init(
+            apiKeyProvider: apiKeys,
+            backends: AIBackends(claude: ClaudeClient(), local: ChatCompletionsClient()),
+            harper: HarperClient.shared
+        )
     }
 
     public convenience init(apiKeyProvider: @escaping @Sendable () -> String?) {
@@ -32,10 +36,11 @@ public final class HybridGrammarEngine: GrammarChecking, TextRewriting, ToneDete
         )
     }
 
-    convenience init(apiKeyProvider: @escaping @Sendable (AIProvider) -> String?, backends: AIBackends) {
+    convenience init(apiKeyProvider: @escaping @Sendable (AIProvider) -> String?, backends: AIBackends, harper: (any HarperLinting)? = nil) {
         self.init(
             apiKeyProvider: apiKeyProvider,
             spellChecker: LocalSpellChecker(),
+            harper: harper,
             aiService: PromptGrammarService(backends: backends),
             backends: backends
         )
@@ -44,6 +49,8 @@ public final class HybridGrammarEngine: GrammarChecking, TextRewriting, ToneDete
     init(
         apiKeyProvider: @escaping @Sendable (AIProvider) -> String?,
         spellChecker: any SpellChecking,
+        harper: (any HarperLinting)? = nil,
+        harperLocator: HarperLocator = HarperLocator(),
         aiService: any GrammarAIService,
         backends: AIBackends,
         cache: EditCache = EditCache(),
@@ -53,7 +60,14 @@ public final class HybridGrammarEngine: GrammarChecking, TextRewriting, ToneDete
         let languages = LanguageSource(keyboardLanguages: keyboardLanguages)
         self.spellChecker = spellChecker
         self.backends = backends
-        pipeline = CheckPipeline(spellChecker: spellChecker, aiService: aiService, cache: cache, endpoints: endpoints, languages: languages)
+        pipeline = CheckPipeline(
+            spellChecker: spellChecker,
+            harper: HarperChecker(linter: harper, locator: harperLocator),
+            aiService: aiService,
+            cache: cache,
+            endpoints: endpoints,
+            languages: languages
+        )
         rewriter = TextRewriter(backends: backends, endpoints: endpoints, languages: languages)
         composer = TextComposer(backends: backends, endpoints: endpoints)
         toneDetector = ToneDetector(backends: backends, endpoints: endpoints, languages: languages)
@@ -122,5 +136,9 @@ public final class HybridGrammarEngine: GrammarChecking, TextRewriting, ToneDete
 
     public func testLocalModel(at address: String, model: String) async throws -> LocalModelTestResult {
         try await tester.testLocalModel(at: address, model: model)
+    }
+
+    public func harperInstallation(customPath: String) async -> HarperInstallation {
+        await HarperProbe.installation(customPath: customPath)
     }
 }
