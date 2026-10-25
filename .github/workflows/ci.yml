@@ -1,5 +1,5 @@
-# Lints, builds (debug and release) and tests the app (and the website assembly script) on every push
-# to main and every pull request.
+# Lints, builds (debug and release) and tests the app on every push to main and every pull request.
+# The website and its scripts have their own workflow, site.yml.
 name: CI
 
 on:
@@ -8,12 +8,18 @@ on:
     paths-ignore:
       - "site/**"
       - "**/*.md"
-      - ".github/workflows/pages.yml"
+      - "scripts/assemble-site.py"
+      - "scripts/test-assemble-site.py"
+      - "scripts/test-site.py"
+      - ".github/workflows/site.yml"
   pull_request:
     paths-ignore:
       - "site/**"
       - "**/*.md"
-      - ".github/workflows/pages.yml"
+      - "scripts/assemble-site.py"
+      - "scripts/test-assemble-site.py"
+      - "scripts/test-site.py"
+      - ".github/workflows/site.yml"
   workflow_dispatch:
 
 permissions:
@@ -29,8 +35,24 @@ env:
   HOMEBREW_NO_INSTALL_CLEANUP: "1"
 
 jobs:
-  lint:
-    name: Lint
+  test:
+    name: Build and test
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Show toolchain
+        run: swift --version
+      - name: Build (warnings are errors)
+        run: swift build --build-tests -Xswiftc -warnings-as-errors
+      - name: Test
+        run: scripts/test.sh --skip-build
+
+  # Lint and the release build together take about as long as the debug build and the tests, so they
+  # share a runner.
+  lint-release:
+    name: Lint and release build
     runs-on: macos-26
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -47,31 +69,9 @@ jobs:
           swiftlint version
       - name: Lint
         run: scripts/lint.sh
-      - name: Test the website assembly
-        run: python3 scripts/test-assemble-site.py
-
-  test:
-    name: Build and test
-    runs-on: macos-26
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Show toolchain
-        run: swift --version
-      - name: Build (warnings are errors)
-        run: swift build --build-tests -Xswiftc -warnings-as-errors
-      - name: Test
-        run: scripts/test.sh --skip-build
-
-  release-build:
-    name: Release build
-    runs-on: macos-26
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
       # The optimizer runs only in release builds, and it can crash the compiler on code the debug
-      # build above compiles (Swift 6.3.3 did). Built the way scripts/build-app.sh builds the app.
+      # build compiles (Swift 6.3.3 did). Built the way scripts/build-app.sh builds the app, and
+      # even when lint fails.
       - name: Build (release)
+        if: ${{ !cancelled() }}
         run: swift build -c release --product GrammarReview

@@ -1,6 +1,15 @@
-# Tests the landing page on every change to it: structure and facts without a browser
-# (scripts/test-site.py), then the demos and the download states in headless Chromium at desktop
-# and phone widths (site/tests, Playwright). pages.yml runs the first part again before deploying.
+# Tests the website and publishes it to GitHub Pages.
+#
+# The tests run on every change to the site: its structure and facts without a browser
+# (scripts/test-site.py), the assembly of the downloads and the update feed against fake releases
+# (scripts/test-assemble-site.py), then the demos and the download states in headless Chromium at
+# desktop and phone widths (site/tests, Playwright).
+#
+# Once they pass on the default branch, the deployment publishes site/ (the landing page), plus the
+# latest release's downloads and the Sparkle update feed, which scripts/assemble-site.py makes from
+# the GitHub releases. That happens on pushes to main that change the site, after every release
+# (release.yml starts it) and on demand.
+# One-time setup: Settings → Pages → Build and deployment → Source: GitHub Actions.
 name: Website
 
 on:
@@ -8,20 +17,26 @@ on:
     branches: [main]
     paths:
       - "site/**"
+      - "scripts/assemble-site.py"
+      - "scripts/test-assemble-site.py"
       - "scripts/test-site.py"
       - ".github/workflows/site.yml"
   pull_request:
     paths:
       - "site/**"
+      - "scripts/assemble-site.py"
+      - "scripts/test-assemble-site.py"
       - "scripts/test-site.py"
       - ".github/workflows/site.yml"
+  # release.yml dispatches it on the default branch: a deployment from a tag (as a reusable
+  # workflow called by release.yml would be) is refused by the github-pages environment.
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  site:
+  test:
     name: Landing page
     runs-on: ubuntu-latest
     steps:
@@ -35,6 +50,8 @@ jobs:
           cache-dependency-path: site/tests/package-lock.json
       - name: Structure, links and facts
         run: python3 scripts/test-site.py
+      - name: Downloads and update feed
+        run: python3 scripts/test-assemble-site.py
       - name: Install Playwright
         working-directory: site/tests
         run: |
@@ -53,3 +70,38 @@ jobs:
             site/tests/playwright-report
           if-no-files-found: ignore
           retention-days: 14
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: test
+    # Pull requests only test, and the github-pages environment deploys only the default branch.
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # also lets gh read the releases
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    # One deployment at a time; don't cancel a deployment that's already running.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - id: pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+      - name: Add the downloads and the update feed
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          BASE_URL: ${{ steps.pages.outputs.base_url }}
+        run: python3 scripts/assemble-site.py "$RUNNER_TEMP/site" --base-url "$BASE_URL"
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: ${{ runner.temp }}/site
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

@@ -150,7 +150,7 @@ To run these checks on the staged files before every commit, enable the hook onc
 git config core.hooksPath .githooks
 ```
 
-CI (`.github/workflows/ci.yml`) runs `scripts/lint.sh`, builds with compiler warnings treated as errors, and runs the tests on every push to `main` and every pull request.
+CI (`.github/workflows/ci.yml`) runs `scripts/lint.sh`, builds with compiler warnings treated as errors, runs the tests and makes a release build on every push to `main` and every pull request.
 
 For [Claude Code](https://claude.com/claude-code), `.claude/settings.json` enables two plugins from Anthropic's official marketplace: `swift-lsp` gives Claude SourceKit-LSP's diagnostics and code navigation for the Swift sources, and `pr-review-toolkit` adds `/pr-review-toolkit:review-pr` and review agents for silent failures, test coverage, comments, type design and simplification.
 
@@ -238,9 +238,9 @@ The landing page is a single static file, `site/index.html`, with no build step.
 python3 -m http.server 4173 --directory site
 ```
 
-Two test suites cover the page. `python3 scripts/test-site.py` checks its structure, links, accessibility basics, the download contract and the facts it states, without a browser. `site/tests/` runs the demos and the download states in headless Chromium at desktop and phone widths: `cd site/tests && npm ci && npx playwright install chromium && npm test`. `.github/workflows/site.yml` runs both on every change to the site.
+Two test suites cover the page. `python3 scripts/test-site.py` checks its structure, links, accessibility basics, the download contract and the facts it states, without a browser. `site/tests/` runs the demos and the download states in headless Chromium at desktop and phone widths: `cd site/tests && npm ci && npx playwright install chromium && npm test`. `.github/workflows/site.yml` runs both, and `scripts/test-assemble-site.py`, on every change to the site.
 
-`.github/workflows/pages.yml` publishes the site to GitHub Pages on every push to `main` that touches it and after every release. Before the first deploy, set Settings → Pages → *Source* to **GitHub Actions**. Release files never go into git: `scripts/assemble-site.py` copies `site/` and adds these, made from the GitHub releases:
+Once they pass, the same workflow publishes the site to GitHub Pages on every push to `main` that touches it and after every release. Before the first deploy, set Settings → Pages → *Source* to **GitHub Actions**. Release files never go into git: `scripts/assemble-site.py` copies `site/` and adds these, made from the GitHub releases:
 
 | Path | What |
 |---|---|

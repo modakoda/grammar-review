@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Checks site/index.html without a browser: structure, links, accessibility basics, the download
-contract and the facts the page states about the app. Standard library only; CI and pages.yml run it
-before deploying. The browser tests are in site/tests/ (Playwright).
+contract and the facts the page states about the app. Standard library only; site.yml runs it before
+every deployment. The browser tests are in site/tests/ (Playwright).
 
     python3 scripts/test-site.py [path/to/index.html]
 """
