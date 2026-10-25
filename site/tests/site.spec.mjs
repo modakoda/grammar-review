@@ -170,9 +170,24 @@ test.describe('download', () => {
     await expect(page.locator('#dlSha')).toBeVisible();
     await page.locator('#dlSha summary').click();
     await expect(page.locator('#dlShaList')).toContainText('a'.repeat(64));
+    await expect(page.locator('#dlShaList')).toContainText('Grammar-Review-0.2.0.dmg');
+    await expect(page.locator('#dlShaCmd')).toHaveText('shasum -a 256 Grammar-Review-0.2.0.dmg');
     const hrefs = await page.locator('[data-dl]').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
     expect(new Set(hrefs)).toEqual(new Set(['download/Grammar-Review.dmg']));
+    // The URLs stay the same; the saved files carry the version.
+    const names = await page.locator('[data-dl]').evaluateAll((as) => as.map((a) => a.getAttribute('download')));
+    expect(new Set(names)).toEqual(new Set(['Grammar-Review-0.2.0.dmg']));
+    await expect(page.locator('#dlZip')).toHaveAttribute('download', 'Grammar-Review-0.2.0.zip');
     await expect(page.locator('#download .soon-only')).toBeHidden();
+  });
+
+  test('the downloaded dmg is saved with the version in its name', async ({ page }) => {
+    // Chromium fetches downloads itself, past page.route, so the local server answers with a 404;
+    // the name it saves under comes from the link's download attribute all the same.
+    await open(page, { release: RELEASE });
+    await expect(page.locator('#download')).toHaveAttribute('data-state', 'ready');
+    const [download] = await Promise.all([page.waitForEvent('download'), page.locator('#download [data-dl]').click()]);
+    expect(download.suggestedFilename()).toBe('Grammar-Review-0.2.0.dmg');
   });
 
   test('an unsigned release shows the Open Anyway step', async ({ page }) => {

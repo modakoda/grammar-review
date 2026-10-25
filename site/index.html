@@ -654,7 +654,7 @@ footer nav a:hover { color: var(--ink); }
           <p><span class="soon">First release coming soon.</span> Until then, build it from source: it takes one command (<a href="#source">see below</a>).</p>
         </div>
         <p class="fine">Free and open source. Release builds check for updates once installed. The latest version is always at <code>download/Grammar-Review.dmg</code>; the full list is on <a href="https://github.com/modakoda/grammar-review/releases">GitHub Releases</a>.</p>
-        <details id="dlSha" hidden><summary>SHA-256 checksums</summary><dl id="dlShaList"></dl><p>To check a download, run <code>shasum -a 256 Grammar-Review.dmg</code> in Terminal and compare.</p></details>
+        <details id="dlSha" hidden><summary>SHA-256 checksums</summary><dl id="dlShaList"></dl><p>To check a download, run <code id="dlShaCmd">shasum -a 256 Grammar-Review.dmg</code> in Terminal and compare.</p></details>
       </div>
       <div class="reveal">
         <ol class="steps" id="dlInstall" data-notarized="true">
@@ -920,11 +920,12 @@ footer nav a:hover { color: var(--ink); }
   // The deployment publishes the newest release as download/Grammar-Review.dmg (and .zip) and
   // describes it in download/latest.json. Before the first release (and in local previews) there
   // is no latest.json, or its version is null: the page then says the first release is coming and
-  // points to building from source.
+  // points to building from source. The URLs stay the same from release to release, but the
+  // download attribute saves the files with the version in their name, Grammar-Review-<version>.dmg.
   const DMG = 'download/Grammar-Review.dmg';
   const dlCard = $('#download'), dlMeta = $('#dlMeta'), dlZip = $('#dlZip'), heroDlMeta = $('#heroDlMeta');
   const dlInstall = $('#dlInstall'), dlStepTitle = $('#dlStepTitle'), dlStepText = $('#dlStepText');
-  const dlSha = $('#dlSha'), dlShaList = $('#dlShaList'), dlButtons = $$('[data-dl]');
+  const dlSha = $('#dlSha'), dlShaList = $('#dlShaList'), dlShaCmd = $('#dlShaCmd'), dlButtons = $$('[data-dl]');
   const dlDate = $('#dlDate'), dlDateText = $('#dlDateText');
   const systemLine = (v) => {
     const m = /^(\d+)(?:\.(\d+))?/.exec(String(v || '14'));
@@ -958,8 +959,11 @@ footer nav a:hover { color: var(--ink); }
     dlCard.dataset.state = 'ready';
     dlMeta.textContent = meta;
     heroDlMeta.textContent = meta;
+    // isRelease allows only letters, digits and . _ + - in the version, so it is safe in a file name.
+    const saveAs = (kind) => `Grammar-Review-${info.version}.${kind}`;
     const zipSize = sizeLine(files.zip && files.zip.size);
     dlZip.textContent = zipSize ? `or get the .zip (${zipSize})` : 'or get the .zip';
+    dlZip.setAttribute('download', saveAs('zip'));
     const released = dateLine(info.published);
     dlDateText.textContent = released;
     dlDate.hidden = !released;
@@ -967,7 +971,7 @@ footer nav a:hover { color: var(--ink); }
     dlInstall.dataset.notarized = String(info.notarized === true);
     dlButtons.forEach((a) => {
       a.href = DMG;
-      a.setAttribute('download', '');
+      a.setAttribute('download', saveAs('dmg'));
       // Show the install steps while the download starts.
       a.addEventListener('click', () => {
         setTimeout(() => $('#start').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' }), 50);
@@ -978,13 +982,14 @@ footer nav a:hover { color: var(--ink); }
       dlShaList.textContent = '';
       sums.forEach(([k, f]) => {
         const dt = document.createElement('dt');
-        dt.textContent = typeof f.name === 'string' && f.name ? f.name : `Grammar-Review.${k}`;
+        dt.textContent = saveAs(k);
         const dd = document.createElement('dd');
         const code = document.createElement('code');
         code.textContent = f.sha256.toLowerCase();
         dd.appendChild(code);
         dlShaList.append(dt, dd);
       });
+      dlShaCmd.textContent = `shasum -a 256 ${saveAs('dmg')}`;
       dlSha.hidden = false;
     }
   }

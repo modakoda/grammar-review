@@ -300,7 +300,7 @@ Once they pass, the same workflow publishes the site to GitHub Pages on every pu
 
 | Path | What |
 |---|---|
-| `download/Grammar-Review.dmg`, `download/Grammar-Review.zip` | The latest release, at URLs that stay the same from release to release |
+| `download/Grammar-Review.dmg`, `download/Grammar-Review.zip` | The latest release, at URLs that stay the same from release to release. The page's download links save them as `Grammar-Review-<version>.dmg` and `.zip` |
 | `download/latest.json` | What the latest release is (below) |
 | `appcast.xml` | Sparkle's update feed: the last 10 releases signed as updates, with their release notes (so the notes are public too) |
 | `updates/Grammar-Review-<version>.zip` | Those releases' zips |
