@@ -149,7 +149,7 @@ dotnet publish windows/src/GrammarReview.Windows -c Release -r win-x64 --self-co
 | Rewrite in your own words | In the editor, *Rewrite* → *Describe a Change…*, or type an instruction on the rewrite card |
 | Draft new text | In any field, `⌃⌥W` (or menu bar icon → *Write with AI…*); in the editor, *Write with AI*. Type a request, Return, then *Insert* (at the cursor) or *Replace* (the selection) |
 | Check tone and readability | In the editor's sidebar, switch to *Insights* |
-| Check for plagiarism | In the editor's sidebar, switch to *Plagiarism* and click *Check for Plagiarism*. *Show in Text* finds a source's sentences; *Cite* copies its citation |
+| Check for plagiarism | In the editor's sidebar, switch to *Plagiarism* and click *Check for Plagiarism*. *Show in Text* finds a source's sentences; *APA*, *MLA* or *Chicago* copies its citation |
 | Check grammar offline | `brew install harper`, then Settings → General → *Offline grammar* |
 | Pause, turn AI off, disable for an app | Menu bar icon |
 | Settings | Menu bar icon → *Settings…* |

@@ -121,6 +121,16 @@ private struct PlagiarismSourceCard: View {
     let source: PlagiarismSource
     let isSelected: Bool
     let model: EditorModel
+    @ViewState private var copied: CitationStyle?
+
+    private func copy(_ style: CitationStyle) {
+        PlagiarismSession.copy(source, style: style)
+        copied = style
+        Task {
+            try? await Task.sleep(for: .seconds(1.5))
+            if copied == style { copied = nil }
+        }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -143,17 +153,20 @@ private struct PlagiarismSourceCard: View {
             HStack(spacing: 6) {
                 Button("Show in Text") { model.revealPlagiarism(source) }
                     .buttonStyle(PillButtonStyle(kind: .secondary))
-                Menu("Cite") {
-                    ForEach(CitationStyle.allCases) { style in
-                        Button("Copy \(style.edition) Citation") { PlagiarismSession.copy(source, style: style) }
-                    }
-                }
-                .menuStyle(.borderlessButton)
-                .fixedSize()
                 Spacer(minLength: 4)
                 Link(destination: source.url) {
                     Label("Open", systemImage: "arrow.up.right.square")
                         .font(.system(size: 11))
+                }
+            }
+            HStack(spacing: 6) {
+                Text("Cite")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                ForEach(CitationStyle.allCases) { style in
+                    Button(copied == style ? "Copied" : style.displayName) { copy(style) }
+                        .buttonStyle(PillButtonStyle(kind: .secondary))
+                        .help("Copy the \(style.edition) citation")
                 }
             }
         }
