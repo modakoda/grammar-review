@@ -1,0 +1,187 @@
+# Builds and publishes a release of the default branch (Actions → Release → Run workflow), then
+# redeploys the website so its downloads and the update feed include the release. The version is
+# the date and time the run starts, in UTC: YYYY.MMDD.HHMM, such as 2026.1023.1435, and the release
+# tags the commit it built v2026.1023.1435. Name an existing tag when running it to build that
+# release again.
+#
+# The secrets that exist pick the kind of release:
+#   Notarized  DEVELOPER_ID_CERTIFICATE           base64 of the "Developer ID Application" certificate (.p12)
+#              DEVELOPER_ID_CERTIFICATE_PASSWORD  the .p12's password
+#              NOTARY_APPLE_ID, NOTARY_TEAM_ID    the Apple ID and team that notarize
+#              NOTARY_PASSWORD                    an app-specific password for that Apple ID
+#   Unsigned   none of them: ad-hoc signed and not notarized, and labelled so in the release and on
+#              the website. macOS asks for confirmation before opening it the first time.
+# Updates (Sparkle), optional:
+#   SPARKLE_PUBLIC_KEY   repository variable (or secret): the public key from generate_keys; the app
+#                        checks for updates only when it has one
+#   SPARKLE_PRIVATE_KEY  secret: the private key from `generate_keys -x`; it signs the update.
+#                        Without it the release isn't offered as an update.
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Leave empty for a new version from the date and time, or name an existing tag to build again, e.g. v2026.1023.1435"
+        required: false
+        default: ""
+
+permissions:
+  contents: write # create the tag and the release
+  actions: write # start the website deployment
+
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Release
+    runs-on: macos-26
+    env:
+      NOTARY_PROFILE: grammar-review
+      SPARKLE_PUBLIC_KEY: ${{ vars.SPARKLE_PUBLIC_KEY || secrets.SPARKLE_PUBLIC_KEY }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          ref: ${{ inputs.tag && format('refs/tags/{0}', inputs.tag) || github.sha }}
+          persist-credentials: false
+
+      - name: Choose the version
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ -n "$INPUT_TAG" ]]; then
+            tag="$INPUT_TAG"
+            echo "NEW_TAG=false" >> "$GITHUB_ENV"
+          else
+            if [[ "$GITHUB_REF" != "refs/heads/$DEFAULT_BRANCH" ]]; then
+              echo "::error::New versions are released from $DEFAULT_BRANCH: run the workflow on it, or name an existing tag"
+              exit 1
+            fi
+            # Sparkle compares CFBundleVersion to find updates, so it has to grow with every release.
+            tag="v$(date -u +%Y.%m%d.%H%M)"
+            # The checkout keeps no credentials for git (persist-credentials: false), so ask the API.
+            if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$tag" --silent 2>/dev/null; then
+              echo "::error::The tag $tag already exists; run the workflow again in a minute"
+              exit 1
+            fi
+            echo "NEW_TAG=true" >> "$GITHUB_ENV"
+          fi
+          echo "TAG=$tag" >> "$GITHUB_ENV"
+          echo "VERSION=${tag#v}" >> "$GITHUB_ENV"
+          echo "::notice::Releasing $tag"
+
+      - name: Choose notarized or unsigned
+        env:
+          CERTIFICATE: ${{ secrets.DEVELOPER_ID_CERTIFICATE }}
+          APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
+          TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
+          PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: |
+          missing=()
+          for name in CERTIFICATE APPLE_ID TEAM_ID PASSWORD; do
+            [[ -n "${!name}" ]] || missing+=("$name")
+          done
+          if ((${#missing[@]} == 0)); then
+            echo "MODE=notarized" >> "$GITHUB_ENV"
+          elif ((${#missing[@]} == 4)); then
+            echo "::warning::No Developer ID or notarization secrets: this release is ad-hoc signed and not notarized (see the top of release.yml)"
+            echo "MODE=unsigned" >> "$GITHUB_ENV"
+          else
+            echo "::error::Some of the Developer ID and notarization secrets are missing (${missing[*]}); add all of them, or none for an unsigned release (see the top of release.yml)"
+            exit 1
+          fi
+          if [[ -n "$SPARKLE_PRIVATE_KEY" && -z "$SPARKLE_PUBLIC_KEY" ]]; then
+            echo "::error::The SPARKLE_PRIVATE_KEY secret is set but the SPARKLE_PUBLIC_KEY variable isn't; the app needs the public key to accept updates"
+            exit 1
+          fi
+          if [[ -z "$SPARKLE_PRIVATE_KEY" ]]; then
+            echo "::warning::No SPARKLE_PRIVATE_KEY secret: this release won't be offered as an update (see the top of release.yml)"
+          fi
+
+      - name: Import the signing certificate
+        if: env.MODE == 'notarized'
+        env:
+          CERTIFICATE: ${{ secrets.DEVELOPER_ID_CERTIFICATE }}
+          CERTIFICATE_PASSWORD: ${{ secrets.DEVELOPER_ID_CERTIFICATE_PASSWORD }}
+        run: |
+          keychain="$RUNNER_TEMP/release.keychain-db"
+          echo "KEYCHAIN=$keychain" >> "$GITHUB_ENV"
+          password="$(uuidgen)"
+          security create-keychain -p "$password" "$keychain"
+          security set-keychain-settings -lut 3600 "$keychain"
+          security unlock-keychain -p "$password" "$keychain"
+          echo "$CERTIFICATE" | base64 --decode > "$RUNNER_TEMP/certificate.p12"
+          security import "$RUNNER_TEMP/certificate.p12" -k "$keychain" -P "$CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          rm "$RUNNER_TEMP/certificate.p12"
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$password" "$keychain" >/dev/null
+          security list-keychains -d user -s "$keychain" $(security list-keychains -d user | tr -d '"')
+          identity="$(security find-identity -v -p codesigning "$keychain" | sed -n 's/.*"\(Developer ID Application: .*\)"/\1/p' | head -1)"
+          [[ -n "$identity" ]] || { echo "::error::No Developer ID Application identity in the certificate"; exit 1; }
+          echo "CODESIGN_IDENTITY=$identity" >> "$GITHUB_ENV"
+
+      - name: Store the notarization credentials
+        if: env.MODE == 'notarized'
+        env:
+          APPLE_ID: ${{ secrets.NOTARY_APPLE_ID }}
+          TEAM_ID: ${{ secrets.NOTARY_TEAM_ID }}
+          PASSWORD: ${{ secrets.NOTARY_PASSWORD }}
+        run: |
+          xcrun notarytool store-credentials "$NOTARY_PROFILE" \
+            --apple-id "$APPLE_ID" --team-id "$TEAM_ID" --password "$PASSWORD" --keychain "$KEYCHAIN"
+
+      - name: Build and package
+        env:
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+        run: |
+          if [[ "$MODE" == notarized ]]; then
+            NOTARY_KEYCHAIN="$KEYCHAIN" scripts/release.sh
+          else
+            scripts/release.sh --ad-hoc
+          fi
+
+      - name: Publish the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          assets=(build/release/Grammar-Review-"$VERSION".dmg build/release/Grammar-Review-"$VERSION".zip build/release/release.json)
+          title="Grammar Review $VERSION"
+          notes="$RUNNER_TEMP/notes.md"
+          if [[ "$MODE" == notarized ]]; then
+            echo "Signed with a Developer ID and notarized by Apple." > "$notes"
+          else
+            title="$title (not notarized)"
+            cat > "$notes" <<'EOF'
+          **Not notarized.** This build is ad-hoc signed, without a Developer ID, so macOS asks before opening it the first time: open it, then choose System Settings → Privacy & Security → *Open Anyway*.
+          EOF
+          fi
+          if [[ "$NEW_TAG" == true ]]; then
+            # Tagged only now, so a failed build leaves no tag behind.
+            gh release create "$TAG" "${assets[@]}" --target "$GITHUB_SHA" --title "$title" --notes-file "$notes" --generate-notes
+          elif gh release view "$TAG" >/dev/null 2>&1; then
+            # Run again for a tag that has a release: replace its files and title, keep its notes.
+            gh release upload "$TAG" "${assets[@]}" --clobber
+            gh release edit "$TAG" --title "$title"
+            echo "::notice::Replaced the files of the existing $TAG release; check that its notes still say whether it's notarized"
+          else
+            gh release create "$TAG" "${assets[@]}" --verify-tag --title "$title" --notes-file "$notes" --generate-notes
+          fi
+
+      # Releases and pushes made with GITHUB_TOKEN don't trigger other workflows, but a dispatch
+      # does. It runs on the default branch, which the github-pages environment allows to deploy.
+      - name: Update the website
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: gh workflow run pages.yml --ref "$DEFAULT_BRANCH"
+
+      - name: Remove the keychain
+        if: always()
+        run: |
+          if [[ -n "${KEYCHAIN:-}" ]]; then
+            security delete-keychain "$KEYCHAIN" || true
+          fi

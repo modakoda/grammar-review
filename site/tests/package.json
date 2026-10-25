@@ -1,0 +1,12 @@
+{
+  "name": "grammar-review-site-tests",
+  "private": true,
+  "description": "Browser tests for the landing page (site/index.html). Run from this directory: npm ci && npx playwright install chromium && npm test",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  }
+}

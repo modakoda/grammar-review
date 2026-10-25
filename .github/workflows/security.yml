@@ -1,0 +1,48 @@
+# Runs scripts/security.sh (Gitleaks, OSV-Scanner, zizmor, Semgrep) on every push to main and every
+# pull request, whatever it changes, and once a week: new advisories appear for dependencies and
+# actions that haven't changed.
+name: Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "23 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  HOMEBREW_NO_AUTO_UPDATE: "1"
+  HOMEBREW_NO_INSTALL_CLEANUP: "1"
+
+jobs:
+  security:
+    name: Security checks
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          fetch-depth: 0 # Gitleaks scans the whole history.
+          persist-credentials: false
+      # The scanners from the Brewfile, current: an old formula list would install old rules and audits.
+      - name: Install the scanners
+        run: |
+          brew update --quiet
+          brew install gitleaks osv-scanner semgrep zizmor
+          gitleaks version
+          osv-scanner --version
+          zizmor --version
+          semgrep --version
+      - name: Scan
+        env:
+          # Turns on zizmor's online audits: actions with known vulnerabilities, and pinned commits
+          # that don't belong to the action's repository.
+          GH_TOKEN: ${{ github.token }}
+        run: scripts/security.sh

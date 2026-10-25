@@ -1,0 +1,11 @@
+.DS_Store
+.build/
+.build-*/
+.swiftpm/
+build/
+DerivedData/
+*.xcodeproj
+.claude/worktrees/
+site/tests/node_modules/
+site/tests/test-results/
+site/tests/playwright-report/

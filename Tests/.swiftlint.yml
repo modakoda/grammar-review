@@ -1,0 +1,12 @@
+# Test code: force unwraps and `try!` fail the test loudly, which is what we want, and suites
+# grow long. Expectations like `#expect(text == "")` print both sides on failure.
+disabled_rules:
+  - force_try
+  - force_unwrapping
+  - implicitly_unwrapped_optional
+  - empty_string
+  - static_over_final_class
+  - type_name
+  - type_body_length
+  - file_length
+  - function_body_length

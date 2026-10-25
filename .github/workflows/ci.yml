@@ -1,0 +1,65 @@
+# Lints, builds and tests the app (and the website assembly script) on every push to main and every
+# pull request.
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "site/**"
+      - "**/*.md"
+      - ".github/workflows/pages.yml"
+  pull_request:
+    paths-ignore:
+      - "site/**"
+      - "**/*.md"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A newer push to the same branch makes the older run pointless.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  HOMEBREW_NO_AUTO_UPDATE: "1"
+  HOMEBREW_NO_INSTALL_CLEANUP: "1"
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+      # The runner image's Homebrew formula list can be weeks old (HOMEBREW_NO_AUTO_UPDATE keeps it
+      # so), which installs a SwiftFormat older than .swiftformat's --min-version and its rules.
+      # Only these two from the Brewfile: security.yml installs the scanners.
+      - name: Install SwiftFormat and SwiftLint
+        run: |
+          brew update --quiet
+          brew install swiftformat swiftlint
+          swiftformat --version
+          swiftlint version
+      - name: Lint
+        run: scripts/lint.sh
+      - name: Test the website assembly
+        run: python3 scripts/test-assemble-site.py
+
+  test:
+    name: Build and test
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+      - name: Show toolchain
+        run: swift --version
+      - name: Build (warnings are errors)
+        run: swift build --build-tests -Xswiftc -warnings-as-errors
+      - name: Test
+        run: scripts/test.sh --skip-build

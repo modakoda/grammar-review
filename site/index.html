@@ -1,0 +1,1063 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grammar Review</title>
+<meta name="description" content="A free, native writing assistant for your Mac. It underlines mistakes in any app, fixes them in one click, rewrites, drafts and tells you how you sound. Your own AI key or a local model; your text stays yours.">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0b0a1f" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6ecdf" media="(prefers-color-scheme: light)">
+<meta property="og:title" content="Grammar Review — the red squiggle, grown up">
+<meta property="og:description" content="Underlines mistakes in every app on your Mac and fixes them in one click. Free, native, private.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Geist+Mono:wght@400..600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* ======================================================================
+   Grammar Review — landing page
+   One static file. The scene: a night that turns to dawn as you scroll,
+   suggestion cards drifting like paper in the wind, and the red squiggle,
+   grown up, snaking through the whole page as the divider between sections.
+   ====================================================================== */
+
+:root {
+  --sky-0: #07061a;
+  --sky-1: #0f0c2e;
+  --sky-2: #2a1b5e;
+  --sky-3: #5a2a6e;
+  --dawn: #ff9f6e;
+  --dusk: #c2417f;
+  --ink: #f4efe6;
+  --ink-2: rgba(244, 239, 230, 0.72);
+  --ink-3: rgba(244, 239, 230, 0.5);
+  --paper: #f7efe2;
+  --paper-ink: #1a1530;
+  --paper-ink-2: #5b5470;
+  --paper-line: rgba(26, 21, 48, 0.1);
+  --lime: #d9ff5c;
+  --lime-ink: #1a1f05;
+  --red: #ff5f72;
+  --blue: #63b9ff;
+  --purple: #c89bff;
+  --green: #6fe3a5;
+  --amber: #ffcf5a;
+  --line: rgba(244, 239, 230, 0.14);
+  --glass: rgba(255, 255, 255, 0.06);
+  --shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  --radius: 18px;
+  --serif: "Instrument Serif", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --sans: "Geist", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --gutter: clamp(16px, 5vw, 64px);
+  --wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6' viewBox='0 0 12 6'%3E%3Cpath d='M0 3c2-3 4-3 6 0s4 3 6 0' fill='none' stroke='%23ff5f72' stroke-width='1.6'/%3E%3C/svg%3E");
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --sky-0: #f6ecdf;
+    --sky-1: #f3dfd3;
+    --sky-2: #e3c6e3;
+    --sky-3: #b9a7e8;
+    --dawn: #ff9a5c;
+    --dusk: #d05b8f;
+    --ink: #1a1530;
+    --ink-2: rgba(26, 21, 48, 0.74);
+    --ink-3: rgba(26, 21, 48, 0.52);
+    --paper: #fffaf2;
+    --lime: #2a3d00;
+    --lime-ink: #f6ffd6;
+    --red: #d8324a;
+    --blue: #1f6fd0;
+    --purple: #7a44d8;
+    --green: #1f8f5a;
+    --amber: #b57a00;
+    --line: rgba(26, 21, 48, 0.14);
+    --glass: rgba(255, 255, 255, 0.5);
+    --shadow: 0 30px 70px rgba(70, 40, 90, 0.22);
+    --wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6' viewBox='0 0 12 6'%3E%3Cpath d='M0 3c2-3 4-3 6 0s4 3 6 0' fill='none' stroke='%23d8324a' stroke-width='1.6'/%3E%3C/svg%3E");
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--sky-0);
+  overflow-x: hidden;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--lime); outline-offset: 3px; border-radius: 6px; }
+code, kbd, pre { font-family: var(--mono); font-size: 0.92em; }
+kbd {
+  display: inline-block; padding: 1px 7px; border: 1px solid var(--line); border-bottom-width: 2px;
+  border-radius: 6px; background: var(--glass); font-size: 0.8em; line-height: 1.5;
+}
+.skip { position: absolute; left: 16px; top: -60px; padding: 10px 14px; background: var(--lime); color: var(--lime-ink); border-radius: 8px; z-index: 100; }
+.skip:focus { top: 16px; }
+.wrap { width: min(1180px, 100% - 2 * var(--gutter)); margin-inline: auto; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- The sky ---------- */
+.sky {
+  position: fixed; inset: 0; z-index: -2; pointer-events: none;
+  background:
+    radial-gradient(1200px 700px at 80% -10%, var(--sky-3), transparent 60%),
+    radial-gradient(900px 600px at 10% 20%, var(--sky-2), transparent 60%),
+    linear-gradient(180deg, var(--sky-0), var(--sky-1) 60%, var(--sky-0));
+}
+.sky::before, .sky::after {
+  content: ""; position: absolute; inset: -20%;
+  background: conic-gradient(from 90deg at 50% 50%, transparent 0 40%, color-mix(in srgb, var(--dusk) 28%, transparent) 50%, transparent 60%);
+  filter: blur(60px); opacity: 0.55; mix-blend-mode: screen;
+  animation: aurora 38s linear infinite;
+}
+.sky::after { animation-duration: 53s; animation-direction: reverse; background: conic-gradient(from 0deg at 40% 60%, transparent 0 35%, color-mix(in srgb, var(--dawn) 26%, transparent) 50%, transparent 65%); }
+@keyframes aurora { to { transform: rotate(1turn); } }
+.grain {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.16; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* Commas migrate across the sky like birds. */
+.flock { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.flock span {
+  position: absolute; left: -5vw; font: italic 28px/1 var(--serif); color: var(--ink-3); opacity: 0.6;
+  animation: migrate var(--t, 60s) linear infinite; animation-delay: var(--d, 0s);
+  top: var(--y, 20%);
+}
+@keyframes migrate {
+  0% { transform: translate(0, 0) rotate(-8deg); }
+  50% { transform: translate(55vw, -6vh) rotate(6deg); }
+  100% { transform: translate(110vw, 2vh) rotate(-8deg); }
+}
+
+/* ---------- Nav ---------- */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  backdrop-filter: blur(18px) saturate(1.3); -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  background: color-mix(in srgb, var(--sky-0) 55%, transparent);
+  border-bottom: 1px solid var(--line);
+}
+.nav .wrap { display: flex; align-items: center; gap: 18px; min-height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; letter-spacing: -0.01em; }
+.brand img { width: 30px; height: 30px; border-radius: 8px; }
+.nav-links { display: flex; gap: 4px; margin-left: auto; }
+.nav-links a { text-decoration: none; padding: 8px 12px; border-radius: 999px; color: var(--ink-2); font-size: 15px; }
+.nav-links a:hover { color: var(--ink); background: var(--glass); }
+@media (max-width: 760px) { .nav-links { display: none; } }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 999px;
+  text-decoration: none; font-weight: 600; font-size: 16px; border: 1px solid transparent;
+  transition: transform 0.25s cubic-bezier(.2,.8,.2,1), box-shadow 0.25s;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-lime { background: var(--lime); color: var(--lime-ink); box-shadow: 0 10px 30px color-mix(in srgb, var(--lime) 35%, transparent); }
+.btn-ghost { border-color: var(--line); background: var(--glass); color: var(--ink); }
+.btn-sm { padding: 8px 14px; font-size: 14px; }
+.nav .btn { padding: 9px 16px; font-size: 15px; }
+
+/* ---------- Hero ---------- */
+.hero { position: relative; padding: clamp(56px, 10vw, 128px) 0 clamp(80px, 12vw, 160px); overflow: visible; }
+.hero .wrap { position: relative; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 10px; padding: 6px 12px 6px 8px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--glass); font-size: 14px; color: var(--ink-2);
+}
+.eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 4px color-mix(in srgb, var(--lime) 25%, transparent); }
+h1 {
+  font-family: var(--serif); font-weight: 400; letter-spacing: -0.02em;
+  font-size: clamp(46px, 9.5vw, 128px); line-height: 0.96; margin: 26px 0 22px; max-width: 14ch;
+}
+h1 em { font-style: italic; color: var(--dawn); }
+.heal { position: relative; display: inline-block; white-space: nowrap; }
+.heal .w { text-decoration: underline wavy var(--red); text-decoration-thickness: 3px; text-underline-offset: 8px; }
+.heal .r { display: none; }
+.heal.fixed .w { display: none; }
+.heal.fixed .r { display: inline; animation: heal 0.9s cubic-bezier(.2,.8,.2,1); }
+@keyframes heal { 0% { filter: blur(6px); opacity: 0; letter-spacing: 0.2em; } 100% { filter: blur(0); opacity: 1; letter-spacing: -0.02em; } }
+.moon {
+  display: inline-block; width: 0.22em; height: 0.22em; border-radius: 50%; margin-left: 0.08em; vertical-align: 0.02em;
+  background: radial-gradient(circle at 35% 35%, #fff8e7, var(--dawn) 70%);
+  box-shadow: 0 0 30px color-mix(in srgb, var(--dawn) 70%, transparent), 0 0 80px color-mix(in srgb, var(--dawn) 40%, transparent);
+}
+.lede { font-size: clamp(18px, 2vw, 22px); color: var(--ink-2); max-width: 58ch; margin: 0 0 30px; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.cta-meta { width: 100%; margin: 10px 0 0; font-size: 14px; color: var(--ink-3); }
+.soon { color: var(--amber); }
+
+/* Floating paper: suggestion cards adrift in the sky. */
+.drift { position: absolute; inset: 0; pointer-events: none; z-index: -1; }
+.paper {
+  position: absolute; width: 250px; padding: 14px 16px; border-radius: 14px;
+  background: var(--paper); color: var(--paper-ink); box-shadow: var(--shadow);
+  font-size: 14px; line-height: 1.45; transform: rotate(var(--rot, -6deg));
+  animation: float var(--t, 9s) ease-in-out infinite alternate; animation-delay: var(--d, 0s);
+  will-change: transform;
+}
+.paper .cat { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--paper-ink-2); margin-bottom: 6px; }
+.paper .cat i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.paper s { color: var(--paper-ink-2); }
+.paper b { color: var(--paper-ink); }
+.paper .act { display: inline-block; margin-top: 8px; padding: 3px 10px; border-radius: 999px; background: var(--paper-ink); color: var(--paper); font-size: 12px; font-weight: 600; }
+.paper.p1 { right: 2%; top: -6%; --rot: 7deg; --t: 11s; }
+.paper.p2 { right: 4%; bottom: 12%; --rot: -5deg; --t: 13s; --d: -4s; }
+.paper.p3 { right: 0; bottom: -4%; --rot: 3deg; --t: 10s; --d: -7s; width: 220px; }
+@keyframes float { from { translate: 0 -10px; } to { translate: 0 14px; } }
+@media (max-width: 1100px) { .paper.p2 { display: none; } }
+@media (max-width: 900px) { .drift { display: none; } }
+
+/* The door in the sky: a doorway standing in nothing, showing the sentence on the other side. */
+.door {
+  position: absolute; right: 2%; top: 24%; width: 150px; height: 230px; border-radius: 80px 80px 10px 10px;
+  border: 3px solid color-mix(in srgb, var(--ink) 60%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--dawn) 55%, transparent), color-mix(in srgb, var(--dusk) 35%, transparent));
+  box-shadow: inset 0 0 60px color-mix(in srgb, var(--dawn) 40%, transparent), var(--shadow);
+  display: grid; place-items: center; padding: 16px; text-align: center;
+  font: italic 20px/1.2 var(--serif); color: #fff8e7; text-shadow: 0 2px 20px rgba(0,0,0,0.4);
+  animation: float 14s ease-in-out infinite alternate; animation-delay: -2s;
+}
+.door::after { content: ""; position: absolute; right: 18px; top: 52%; width: 8px; height: 8px; border-radius: 50%; background: #fff8e7; box-shadow: 0 0 12px #fff; }
+@media (max-width: 1250px) { .door { display: none; } }
+
+/* ---------- The squiggle that divides sections ---------- */
+.squiggle { display: block; width: 100%; height: 42px; margin: -1px 0; }
+.squiggle path { fill: none; stroke: var(--red); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 6 0; }
+.squiggle .ghost { stroke: var(--line); stroke-width: 1; }
+.squiggle .run { animation: run 1.8s cubic-bezier(.3,.7,.2,1) both paused; stroke-dasharray: 1400; stroke-dashoffset: 1400; }
+.in .squiggle .run, .squiggle.in .run { animation-play-state: running; }
+@keyframes run { to { stroke-dashoffset: 0; } }
+
+/* ---------- Sections ---------- */
+.sec { padding: clamp(64px, 9vw, 120px) 0; position: relative; }
+.kicker { font-family: var(--mono); font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dawn); margin: 0 0 14px; }
+h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(36px, 5.6vw, 72px); line-height: 1.02; letter-spacing: -0.02em; margin: 0 0 18px; max-width: 20ch; }
+h2 em { font-style: italic; color: var(--dawn); }
+.sub { font-size: clamp(17px, 1.6vw, 20px); color: var(--ink-2); max-width: 62ch; margin: 0 0 40px; }
+h3 { font-size: 20px; margin: 0 0 8px; letter-spacing: -0.01em; }
+.reveal { opacity: 0; translate: 0 22px; transition: opacity 0.7s ease, translate 0.7s cubic-bezier(.2,.8,.2,1); }
+.reveal.in { opacity: 1; translate: 0 0; }
+
+/* ---------- The overlay demo ---------- */
+.stage { position: relative; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr); gap: 28px; align-items: start; }
+@media (max-width: 900px) { .stage { grid-template-columns: 1fr; } }
+.window {
+  border-radius: 16px; overflow: hidden; background: var(--paper); color: var(--paper-ink);
+  box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.08); transform: rotate(-1.2deg);
+  transition: transform 0.6s cubic-bezier(.2,.8,.2,1);
+}
+.window:hover, .window:focus-within { transform: rotate(0deg); }
+.titlebar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #ebe3d6; border-bottom: 1px solid var(--paper-line); font-size: 13px; color: var(--paper-ink-2); }
+.lights { display: flex; gap: 6px; }
+.lights i { width: 11px; height: 11px; border-radius: 50%; display: block; }
+.lights i:nth-child(1) { background: #ff5f57; } .lights i:nth-child(2) { background: #febc2e; } .lights i:nth-child(3) { background: #28c840; }
+.titlebar .t { margin-left: auto; margin-right: auto; }
+.mail { padding: 18px 22px 22px; }
+.mail .row { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--paper-line); font-size: 14px; color: var(--paper-ink-2); }
+.mail .row b { color: var(--paper-ink); font-weight: 500; }
+.field { position: relative; padding: 18px 2px 46px; font-size: 17px; line-height: 1.65; min-height: 180px; }
+.field p { margin: 0 0 1em; }
+.iss { position: relative; cursor: pointer; border-radius: 3px; text-decoration: underline wavy; text-decoration-thickness: 2px; text-underline-offset: 4px; transition: background 0.2s; }
+.iss[data-sev="correctness"] { text-decoration-color: var(--red); }
+.iss[data-sev="clarity"] { text-decoration-color: var(--blue); }
+.iss[data-sev="style"] { text-decoration-color: var(--purple); }
+.iss:hover, .iss:focus-visible, .iss.on { background: rgba(255, 95, 114, 0.12); }
+.iss[data-sev="clarity"]:hover, .iss[data-sev="clarity"].on { background: rgba(99, 185, 255, 0.16); }
+.iss[data-sev="style"]:hover, .iss[data-sev="style"].on { background: rgba(200, 155, 255, 0.16); }
+.iss.healed { text-decoration: none; background: color-mix(in srgb, var(--green) 25%, transparent); animation: glow 1.2s ease-out forwards; cursor: default; }
+@keyframes glow { to { background: transparent; } }
+/* The badge is an eye. It blinks. */
+.badge {
+  position: absolute; right: 8px; bottom: 8px; display: flex; align-items: center; gap: 7px; padding: 5px 12px 5px 7px;
+  border-radius: 999px; background: #1a1530; color: #fff; font-size: 13px; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  border: 0;
+}
+.badge.ok { background: #1f8f5a; }
+.eye { position: relative; width: 22px; height: 14px; border-radius: 50% / 60%; background: #fff; overflow: hidden; }
+.eye::before { content: ""; position: absolute; left: 50%; top: 50%; width: 9px; height: 9px; border-radius: 50%; translate: -50% -50%; background: #1a1530; box-shadow: inset 0 0 0 2px var(--red); }
+.eye::after { content: ""; position: absolute; inset: 0; background: #fff; translate: 0 -100%; animation: blink 5s infinite; }
+.badge.ok .eye::before { box-shadow: inset 0 0 0 2px var(--green); }
+@keyframes blink { 0%, 92%, 100% { translate: 0 -100%; } 95%, 97% { translate: 0 0; } }
+.card {
+  position: absolute; z-index: 5; width: min(300px, 92%); padding: 12px 14px; border-radius: 12px;
+  background: #fffaf2; color: var(--paper-ink); box-shadow: 0 20px 50px rgba(0,0,0,0.3); border: 1px solid rgba(0,0,0,0.08);
+  font-size: 14px; line-height: 1.45;
+}
+.card[hidden] { display: none; }
+.card .cat { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--paper-ink-2); }
+.card .cat i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.card .why { margin: 6px 0 8px; color: var(--paper-ink-2); }
+.card .fix { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; }
+.card .fix s { color: var(--paper-ink-2); }
+.card .fix b { padding: 2px 8px; border-radius: 6px; background: color-mix(in srgb, var(--green) 25%, #fff); }
+.card .acts { display: flex; gap: 8px; }
+.pill { padding: 5px 11px; border-radius: 999px; border: 1px solid rgba(0,0,0,0.12); background: #fff; font-size: 13px; font-weight: 600; }
+.pill.go { background: var(--paper-ink); color: #fff; border-color: transparent; }
+.panel {
+  border-radius: 16px; background: var(--paper); color: var(--paper-ink); box-shadow: var(--shadow);
+  border: 1px solid rgba(0,0,0,0.08); overflow: hidden; transform: rotate(1.3deg); transition: transform 0.6s cubic-bezier(.2,.8,.2,1);
+}
+.panel:hover { transform: rotate(0); }
+.panel .head { padding: 12px 14px; border-bottom: 1px solid var(--paper-line); display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.panel .head strong { font-size: 15px; }
+.panel .tone { width: 100%; font-size: 13px; color: var(--paper-ink-2); min-height: 20px; }
+.panel .tone b { color: var(--paper-ink); font-weight: 600; }
+.panel ul { list-style: none; margin: 0; padding: 0; max-height: 330px; overflow: auto; }
+.panel li { padding: 10px 14px; border-bottom: 1px solid var(--paper-line); font-size: 14px; }
+.panel li .cat { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--paper-ink-2); display: flex; gap: 6px; align-items: center; }
+.panel li .cat i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+.panel li .fix { margin: 4px 0 8px; }
+.panel li s { color: var(--paper-ink-2); }
+.panel .ign { padding: 10px 14px; font-size: 13px; color: var(--paper-ink-2); }
+.panel .ign li { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 0; border: 0; }
+.panel .foot { padding: 10px 14px; font-size: 13px; color: var(--paper-ink-2); display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.panel .empty { padding: 28px 14px; text-align: center; color: var(--paper-ink-2); }
+.demo-note { margin: 18px 0 0; font-size: 14px; color: var(--ink-3); display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.sev-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+
+/* ---------- Gallery of features (exhibits) ---------- */
+.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 18px; }
+.exhibit {
+  position: relative; padding: 26px 24px 24px; border-radius: var(--radius); border: 1px solid var(--line);
+  background: linear-gradient(180deg, var(--glass), transparent); min-height: 210px;
+  transition: transform 0.5s cubic-bezier(.2,.8,.2,1), border-color 0.3s; transform: rotate(var(--tilt, 0deg));
+}
+.exhibit:hover { transform: rotate(0) translateY(-4px); border-color: color-mix(in srgb, var(--dawn) 50%, var(--line)); }
+.exhibit:nth-child(3n+1) { --tilt: -0.8deg; } .exhibit:nth-child(3n+2) { --tilt: 0.6deg; } .exhibit:nth-child(3n) { --tilt: -0.4deg; }
+.plaque {
+  position: absolute; top: -12px; left: 20px; padding: 3px 9px; border-radius: 6px; background: var(--paper); color: var(--paper-ink);
+  font: 600 11px/1.6 var(--mono); letter-spacing: 0.08em; box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+}
+.exhibit h3 { margin-top: 4px; }
+.exhibit p { margin: 0; color: var(--ink-2); font-size: 15px; }
+.exhibit .art { margin: 0 0 14px; font-family: var(--serif); font-size: 28px; line-height: 1.1; color: var(--ink); }
+.exhibit .art .sq { text-decoration: underline wavy var(--red); text-decoration-thickness: 2px; text-underline-offset: 5px; }
+.exhibit .art .cl { text-decoration: underline wavy var(--blue); text-decoration-thickness: 2px; text-underline-offset: 5px; }
+.exhibit .art .st { text-decoration: underline wavy var(--purple); text-decoration-thickness: 2px; text-underline-offset: 5px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; }
+.chip { padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); font-size: 12px; color: var(--ink-2); background: var(--glass); }
+.chip.on { background: var(--lime); color: var(--lime-ink); border-color: transparent; font-weight: 600; }
+.keys { display: inline-flex; gap: 6px; margin-left: 4px; }
+
+/* ---------- Editor section ---------- */
+.editor-wrap { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.6fr); gap: 32px; align-items: start; }
+@media (max-width: 900px) { .editor-wrap { grid-template-columns: 1fr; } }
+.ed { border-radius: 16px; overflow: visible; background: var(--paper); color: var(--paper-ink); box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.08); position: relative; }
+.ed .titlebar { border-radius: 16px 16px 0 0; }
+.ed-body { display: grid; grid-template-columns: minmax(0, 1fr) 230px; }
+@media (max-width: 640px) { .ed-body { grid-template-columns: 1fr; } }
+.ed-text { padding: 22px 24px 28px; font-size: 15px; line-height: 1.7; }
+.ed-text p { margin: 0 0 1em; }
+.ed-text .long { background: color-mix(in srgb, var(--amber) 30%, transparent); border-radius: 3px; }
+.ed-side { border-left: 1px solid var(--paper-line); background: #f1e9db; }
+@media (max-width: 640px) { .ed-side { border-left: 0; border-top: 1px solid var(--paper-line); } }
+.tabs { display: flex; gap: 4px; padding: 10px; border-bottom: 1px solid var(--paper-line); }
+.tabs button { flex: 1; padding: 6px 8px; border-radius: 8px; border: 0; background: transparent; font-size: 13px; font-weight: 600; color: var(--paper-ink-2); }
+.tabs button[aria-selected="true"] { background: #fff; color: var(--paper-ink); box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+.tabpanel { padding: 12px; font-size: 13px; }
+.tabpanel[hidden] { display: none; }
+.scard { padding: 10px 12px; border-radius: 10px; background: #fff; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.scard .cat { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--paper-ink-2); display: flex; gap: 6px; align-items: center; }
+.scard .cat i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+.scard p { margin: 4px 0 0; color: var(--paper-ink-2); }
+.scard s { color: var(--paper-ink-2); }
+.insight { padding: 10px 12px; border-radius: 10px; background: #fff; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.insight h3 { margin: 0 0 6px; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--paper-ink-2); }
+.insight .big { font-family: var(--serif); font-size: 30px; line-height: 1; }
+.insight dl { display: grid; grid-template-columns: 1fr auto; gap: 3px 10px; margin: 0; }
+.insight dt { color: var(--paper-ink-2); } .insight dd { margin: 0; font-variant-numeric: tabular-nums; text-align: right; }
+.tonerow { display: flex; gap: 8px; align-items: center; margin: 4px 0; }
+.dots i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: rgba(0,0,0,0.15); margin-left: 3px; }
+.dots i.f { background: var(--paper-ink); }
+.ed-notes h3 { font-size: 18px; }
+.ed-notes p { color: var(--ink-2); font-size: 15px; margin: 0 0 18px; }
+
+/* ---------- Models: the brains ---------- */
+.brains { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+.brain {
+  padding: 20px; border-radius: 16px; border: 1px solid var(--line); background: var(--glass);
+  display: grid; gap: 8px; align-content: start; min-height: 150px;
+}
+.brain .who { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.brain .who b { font-size: 17px; }
+.brain .tag { font: 600 11px/1.6 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--dawn); }
+.brain p { margin: 0; color: var(--ink-2); font-size: 14px; }
+.brain.local { border-color: color-mix(in srgb, var(--green) 50%, var(--line)); }
+.brain.local .tag { color: var(--green); }
+.orbit { display: flex; gap: 8px; flex-wrap: wrap; margin: 24px 0 0; font-size: 14px; color: var(--ink-3); }
+
+/* ---------- Privacy: the vault ---------- */
+.vault { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: center; }
+@media (max-width: 900px) { .vault { grid-template-columns: 1fr; } }
+.vault ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.vault li { padding: 14px 16px 14px 48px; position: relative; border-radius: 12px; border: 1px solid var(--line); background: var(--glass); color: var(--ink-2); font-size: 15px; }
+.vault li::before { content: "✓"; position: absolute; left: 16px; top: 12px; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--lime); color: var(--lime-ink); font-size: 13px; font-weight: 800; }
+.keyhole { margin: 0 auto; width: min(340px, 100%); text-align: center; }
+.keyhole .disc {
+  width: 100%; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center;
+  background: radial-gradient(circle at 50% 40%, var(--sky-3), var(--sky-0) 70%); border: 1px solid var(--line); box-shadow: var(--shadow);
+  animation: float 16s ease-in-out infinite alternate;
+}
+.keyhole .hole { width: 110px; height: 160px; background: var(--sky-0); border-radius: 55px 55px 12px 12px; box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 0 0 6px color-mix(in srgb, var(--dawn) 50%, transparent); display: grid; place-items: center; }
+.keyhole .hole span { font: italic 22px/1.1 var(--serif); color: var(--dawn); }
+.keyhole figcaption { margin-top: 18px; font-size: 14px; color: var(--ink-3); }
+
+/* ---------- Download ---------- */
+.dl { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+@media (max-width: 900px) { .dl { grid-template-columns: 1fr; } }
+.dlcard {
+  padding: 28px; border-radius: var(--radius); background: var(--paper); color: var(--paper-ink); box-shadow: var(--shadow);
+  transform: rotate(-1deg); transition: transform 0.6s cubic-bezier(.2,.8,.2,1);
+}
+.dlcard:hover { transform: rotate(0); }
+.dlcard img { width: 72px; height: 72px; border-radius: 18px; margin-bottom: 14px; box-shadow: 0 10px 24px rgba(0,0,0,0.2); }
+.dlcard h3 { font-family: var(--serif); font-size: 32px; font-weight: 400; margin: 0 0 4px; }
+.dlcard .meta { color: var(--paper-ink-2); margin: 0 0 18px; font-size: 15px; }
+.dlcard .btn-lime { background: var(--paper-ink); color: var(--paper); box-shadow: none; }
+.dlcard .alt { display: block; margin: 12px 0 0; font-size: 14px; color: var(--paper-ink-2); }
+.dlcard details { margin-top: 16px; font-size: 13px; color: var(--paper-ink-2); }
+.dlcard dl { margin: 8px 0 0; display: grid; gap: 4px; }
+.dlcard dt { font-weight: 600; } .dlcard dd { margin: 0 0 6px; overflow-wrap: anywhere; }
+.dlcard code { font-size: 12px; }
+.dlcard[data-state="soon"] .ready-only { display: none; }
+.dlcard[data-state="ready"] .soon-only { display: none; }
+.steps { counter-reset: s; list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.steps li { position: relative; padding: 16px 18px 16px 62px; border-radius: 14px; border: 1px solid var(--line); background: var(--glass); }
+.steps li::before { counter-increment: s; content: counter(s); position: absolute; left: 16px; top: 14px; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-family: var(--serif); font-size: 20px; background: var(--paper); color: var(--paper-ink); }
+.steps h3 { font-size: 17px; margin-bottom: 4px; }
+.steps p { margin: 0; color: var(--ink-2); font-size: 15px; }
+.steps .unsigned { display: none; margin-top: 8px; padding: 10px 12px; border-radius: 10px; background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--ink); }
+#dlInstall[data-notarized="false"] .unsigned { display: block; }
+.term { margin-top: 20px; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); background: #0b0a1f; color: #e9e4f3; }
+.term .titlebar { background: #16132b; color: #b7b0cc; border-bottom-color: rgba(255,255,255,0.08); }
+.term pre { margin: 0; padding: 16px 18px; font-size: 14px; line-height: 1.6; overflow-x: auto; }
+.term .p { color: var(--lime); }
+.term .c { color: #8b85a3; }
+.term button { position: absolute; }
+.term .bar { position: relative; }
+.term .copy { right: 10px; top: 50%; translate: 0 -50%; padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); background: transparent; color: #e9e4f3; font-size: 12px; }
+
+/* ---------- FAQ ---------- */
+.faq { max-width: 820px; }
+.faq details { border-top: 1px solid var(--line); }
+.faq details:last-child { border-bottom: 1px solid var(--line); }
+.faq summary { list-style: none; cursor: pointer; padding: 18px 44px 18px 0; position: relative; font-size: 18px; font-weight: 600; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; position: absolute; right: 4px; top: 14px; font-family: var(--serif); font-size: 28px; color: var(--dawn); transition: transform 0.3s; }
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq .a { padding: 0 0 20px; color: var(--ink-2); max-width: 70ch; }
+.faq .a p { margin: 0 0 10px; }
+
+/* ---------- Final ---------- */
+.final { text-align: center; padding: clamp(80px, 12vw, 160px) 0; position: relative; }
+.final h2 { margin-inline: auto; }
+.final .moonbig { display: block; width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 28px; background: radial-gradient(circle at 35% 35%, #fff8e7, var(--dawn) 70%); box-shadow: 0 0 60px color-mix(in srgb, var(--dawn) 70%, transparent), 0 0 160px color-mix(in srgb, var(--dawn) 35%, transparent); animation: float 12s ease-in-out infinite alternate; }
+footer { border-top: 1px solid var(--line); padding: 28px 0 40px; font-size: 14px; color: var(--ink-3); }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; }
+footer nav { display: flex; gap: 16px; flex-wrap: wrap; margin-left: auto; }
+footer a { color: var(--ink-2); text-decoration: none; }
+footer a:hover { color: var(--ink); text-decoration: underline; }
+
+/* ---------- Small screens: nothing tilts, nothing pokes out ---------- */
+main, .hero, .sec, .final { overflow-x: clip; }
+@media (max-width: 760px) {
+  .window, .panel, .dlcard, .exhibit, .window:hover, .panel:hover, .dlcard:hover, .exhibit:hover { transform: none; }
+  .final .moonbig { width: 90px; height: 90px; }
+}
+
+/* ---------- Motion off ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .sky::before, .sky::after, .flock span, .paper, .door, .final .moonbig, .eye::after, .heal.fixed .r, .iss.healed { animation: none !important; }
+  .reveal { opacity: 1; translate: none; transition: none; }
+  .squiggle .run { animation: none; stroke-dashoffset: 0; }
+  .btn, .window, .panel, .exhibit, .dlcard { transition: none; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="sky" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="flock" aria-hidden="true">
+  <span style="--y:12%;--t:70s;--d:-10s">,</span>
+  <span style="--y:22%;--t:85s;--d:-40s">,</span>
+  <span style="--y:34%;--t:64s;--d:-25s">;</span>
+  <span style="--y:58%;--t:92s;--d:-5s">,</span>
+  <span style="--y:74%;--t:78s;--d:-55s">’</span>
+</div>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="#main"><img src="icon.png" alt="" width="30" height="30">Grammar Review</a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#demo">Try it</a>
+      <a href="#features">Features</a>
+      <a href="#editor">Editor</a>
+      <a href="#models">Models</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn btn-lime" href="#download" data-dl>Download</a>
+  </div>
+</header>
+
+<main id="main">
+<!-- ===================== Hero ===================== -->
+<section class="hero" id="hero" aria-labelledby="h1">
+  <div class="wrap">
+    <div class="drift" aria-hidden="true">
+      <div class="door">the meeting is on <b>Thursday</b></div>
+      <div class="paper p1"><div class="cat"><i style="background:var(--red)"></i>Grammar</div><s>I has</s> → <b>I have</b><div>Use “have” with “I”.</div><span class="act">Accept</span></div>
+      <div class="paper p2"><div class="cat"><i style="background:var(--purple)"></i>Tone</div>Sounds 😎 <b>Confident</b> · 🤗 <b>Friendly</b><div>Sure of itself, warm at the edges.</div></div>
+      <div class="paper p3"><div class="cat"><i style="background:var(--blue)"></i>Clarity</div><s>at this point in time</s> → <b>now</b><span class="act">Accept</span></div>
+    </div>
+    <p class="eyebrow reveal in"><span class="dot" aria-hidden="true"></span>Free, native, open source · macOS 14+</p>
+    <h1 id="h1">Every <span class="heal" id="heal"><span class="w" aria-hidden="true">sentense</span><span class="r">sentence</span><span class="sr">sentence</span></span>, dreaming of being <em>right</em><span class="moon" aria-hidden="true"></span></h1>
+    <p class="lede">Grammar Review lives in your Mac’s menu bar and follows whatever you’re typing, in any app. It underlines mistakes where they are, fixes them in one click, rewrites a sentence, drafts a reply and tells you how you sound. With your own AI key, or a model that never leaves your Mac.</p>
+    <div class="cta">
+      <a class="btn btn-lime" href="#download" data-dl>Download for Mac</a>
+      <a class="btn btn-ghost" href="#demo">See it work ↓</a>
+      <button class="btn btn-ghost btn-sm" type="button" id="replayHeal" aria-label="Replay the headline correcting itself">Replay ↻</button>
+      <p class="cta-meta" id="heroDlMeta">Requires macOS 14 or later</p>
+    </div>
+  </div>
+</section>
+
+<svg class="squiggle reveal" viewBox="0 0 1400 42" preserveAspectRatio="none" aria-hidden="true"><path class="ghost" d="M0 21c35-18 70-18 105 0s70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0"/><path class="run" d="M0 21c35-18 70-18 105 0s70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0"/></svg>
+
+<!-- ===================== Live demo ===================== -->
+<section class="sec" id="demo" aria-labelledby="demo-h">
+  <div class="wrap">
+    <p class="kicker reveal">The overlay, awake</p>
+    <h2 id="demo-h" class="reveal">A mail that corrects <em>itself</em>.</h2>
+    <p class="sub reveal">Hover an underline, or click one. Accept a fix and watch the eye relax. The panel on the right is what the badge opens: every suggestion, Fix all, and how the mail sounds.</p>
+    <div class="stage reveal">
+      <div class="window" id="demoWindow">
+        <div class="titlebar"><div class="lights" aria-hidden="true"><i></i><i></i><i></i></div><span class="t">Mail — New Message</span></div>
+        <div class="mail">
+          <div class="row"><span>To:</span><b>team@example.com</b></div>
+          <div class="row"><span>Subject:</span><b>Release 2.1</b></div>
+          <div class="field" id="field" aria-label="Email text with suggestions">
+            <p id="fieldText"></p>
+            <button class="badge" id="badge" type="button" aria-live="polite" aria-label="Suggestions"><span class="eye" aria-hidden="true"></span><span id="badgeCount">0</span></button>
+            <div class="card" id="card" hidden role="dialog" aria-label="Suggestion"></div>
+          </div>
+        </div>
+      </div>
+      <aside class="panel" id="panel" aria-label="Suggestions panel">
+        <div class="head"><strong id="panelTitle">Suggestions</strong><button class="pill go" id="fixAll" type="button">Fix all</button><div class="tone" id="toneLine" aria-live="polite"></div></div>
+        <ul id="panelList"></ul>
+        <div class="ign" id="ignored" hidden><strong>Ignored</strong><ul id="ignoredList"></ul></div>
+        <div class="foot"><span>⌃⌥G opens this panel</span><button class="pill" id="replayDemo" type="button">Replay</button></div>
+      </aside>
+    </div>
+    <p class="demo-note"><span><i class="sev-dot" style="background:var(--red)"></i>Correctness</span><span><i class="sev-dot" style="background:var(--blue)"></i>Clarity</span><span><i class="sev-dot" style="background:var(--purple)"></i>Style</span><span>Example text and AI answers, written for this page.</span></p>
+  </div>
+</section>
+
+<svg class="squiggle reveal" viewBox="0 0 1400 42" preserveAspectRatio="none" aria-hidden="true"><path class="ghost" d="M0 21c35-18 70-18 105 0s70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0"/><path class="run" d="M0 21c35-18 70-18 105 0s70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0"/></svg>
+
+<!-- ===================== Features ===================== -->
+<section class="sec" id="features" aria-labelledby="features-h">
+  <div class="wrap">
+    <p class="kicker reveal">A gallery of small mercies</p>
+    <h2 id="features-h" class="reveal">Everything a premium assistant does. <em>Minus the premium.</em></h2>
+    <p class="sub reveal">Twelve exhibits. Each one is on your Mac tonight, in every app you write in.</p>
+    <div class="gallery">
+      <article class="exhibit reveal"><span class="plaque">No. 01</span><p class="art">Mail, Notes, Slack, Safari, Chrome…</p><h3>Works wherever you type</h3><p>No browser extension, no pasting into a website. Grammar Review reads the focused field through macOS Accessibility, so it shows up in the apps you already use, and switches on Chrome’s and Electron’s hidden accessibility modes for you.</p></article>
+      <article class="exhibit reveal"><span class="plaque">No. 02</span><p class="art">ms → <em>then</em> → s</p><h3>Instant, then intelligent</h3><p>Two engines, layered. Spelling, consistency and your style guide are checked on the Mac in milliseconds. After you pause, the AI reads only the paragraphs you changed.</p></article>
+      <article class="exhibit reveal"><span class="plaque">No. 03</span><p class="art">I <span class="sq">has</span> a <span class="cl">very unique</span> <span class="st">idea</span></p><h3>Colour tells you how much it matters</h3><p>Red for correctness, blue for clarity, purple for style. Hover an underline, or just move the caret into it, to see why and fix it.</p></article>
+      <article class="exhibit reveal"><span class="plaque">No. 04</span><div class="chips" aria-hidden="true"><span class="chip on">Improve</span><span class="chip">Rephrase</span><span class="chip">Concise</span><span class="chip">Simplify</span><span class="chip">Expand</span><span class="chip">Professional</span><span class="chip">Formal</span><span class="chip">Informal</span><span class="chip">Friendly</span><span class="chip">Confident</span><span class="chip">Diplomatic</span><span class="chip">Persuasive</span><span class="chip">Academic</span></div><h3>Rewrite in 13 styles, or in your own words <span class="keys"><kbd>⌃⌥R</kbd></span></h3><p>Select text in any app, or just put the cursor in a sentence to rephrase it. Press the shortcut, pick a style, or type “make it sound excited”. Preview, then replace.</p></article>
+      <article class="exhibit reveal"><span class="plaque">No. 05</span><p class="art">“a polite reply declining the meeting”</p><h3>Write with AI <span class="keys"><kbd>⌃⌥W</kbd></span></h3><p>Say what you need. It can read the field for context. Insert puts the draft at the cursor, Replace swaps it for your selection. Facts it wasn’t given become placeholders like [date], never guesses.</p></article>
+      <article class="exhibit reveal"><span class="plaque">No. 06</span><p class="art">Sounds 🙏 Appreciative · 🤗 Friendly</p><h3>Hear how you sound</h3><p>The suggestions panel tells you how your text comes across, with a one-line summary on hover, and warns about tones that may land badly. The AI checks only while the panel is open.</p></article>
+      <article class="exhibit reveal"><span class="plaque">No. 07</span><p class="art">Formal · Expert · Email</p><h3>Goals for every app</h3><p>Tell the AI how the text should sound, who reads it, what kind of writing it is and what it’s for. Set goals per app from the menu bar, or in Settings → Goals.</p></article>
+      <article class="exhibit reveal"><span class="plaque">No. 08</span><p class="art"><s>utilize</s> → use</p><h3>Your team’s style guide</h3><p>A term, what to write instead, an optional note, Match case when capitals matter. Checked offline in every app, ahead of the AI. Import or export CSV or JSON so the whole team shares one.</p></article>
+      <article class="exhibit reveal"><span class="plaque">No. 09</span><p class="art">email · <s>e-mail</s> · colour · <s>color</s></p><h3>Consistent from start to finish</h3><p>When one text says the same thing two ways, the form you use most wins: hyphens, British and American spelling, straight and curly quotes. Offline, in every app.</p></article>
+      <article class="exhibit reveal"><span class="plaque">No. 10</span><p class="art">Labas · Hola · Bonjour · Hallo</p><h3>Fluent in your language</h3><p>The language is detected automatically, from the text and your keyboard layouts. Fixes stay in your language and are never translated; the explanation is in English.</p></article>
+      <article class="exhibit reveal"><span class="plaque">No. 11</span><p class="art">Fix all · Ignore · Restore</p><h3>Fix everything at once <span class="keys"><kbd>⌃⌥G</kbd></span></h3><p>The panel lists every suggestion with Accept and Ignore, and one Fix all for the red ones. Ignored one by mistake? Restore it from the bottom of the list.</p></article>
+      <article class="exhibit reveal"><span class="plaque">No. 12</span><p class="art">Swift. Menu bar. No Dock icon.</p><h3>Native, light, out of the way</h3><p>Draws its underlines in a click-through layer and never takes the keyboard from the app you’re in. Stays quiet until there’s something to fix.</p></article>
+    </div>
+  </div>
+</section>
+
+<svg class="squiggle reveal" viewBox="0 0 1400 42" preserveAspectRatio="none" aria-hidden="true"><path class="ghost" d="M0 21c35-18 70-18 105 0s70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0"/><path class="run" d="M0 21c35-18 70-18 105 0s70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0"/></svg>
+
+<!-- ===================== Editor ===================== -->
+<section class="sec" id="editor" aria-labelledby="editor-h">
+  <div class="wrap">
+    <p class="kicker reveal">A room with a window</p>
+    <h2 id="editor-h" class="reveal">A quiet room for <em>longer</em> writing.</h2>
+    <p class="sub reveal">Press <kbd>⌃⌥E</kbd>, or choose Open Editor… in the menu bar. Write or paste, work through every suggestion in the sidebar, then switch to Insights to see how it reads.</p>
+    <div class="editor-wrap">
+      <div class="ed reveal">
+        <div class="titlebar"><div class="lights" aria-hidden="true"><i></i><i></i><i></i></div><span class="t">Grammar Review Editor</span></div>
+        <div class="ed-body">
+          <div class="ed-text">
+            <p>Hi team,</p>
+            <p>The release <s>past</s> <b>passed</b> every test we ran this week. Thank you for the long nights.</p>
+            <p><span class="long">Before we tell customers, I would like each of you to read the announcement once more, check that the pricing table is right, and make sure the link to the <s>e-mail</s> <b>email</b> support form works, because last time it did not and we only found out when the first complaint arrived.</span></p>
+            <p>Send me your comments by Friday.</p>
+            <p>Priya</p>
+          </div>
+          <div class="ed-side">
+            <div class="tabs" role="tablist" aria-label="Sidebar">
+              <button role="tab" id="tab-sug" aria-selected="true" aria-controls="pane-sug" type="button">Suggestions</button>
+              <button role="tab" id="tab-ins" aria-selected="false" aria-controls="pane-ins" type="button" tabindex="-1">Insights</button>
+            </div>
+            <div class="tabpanel" id="pane-sug" role="tabpanel" aria-labelledby="tab-sug">
+              <div class="scard"><div class="cat"><i style="background:var(--red)"></i>Grammar</div><div><s>past</s> → <b>passed</b></div><p>“Passed” is the verb you need here.</p></div>
+              <div class="scard"><div class="cat"><i style="background:var(--blue)"></i>Word choice</div><div><s>e-mail</s> → <b>email</b></div><p>Your style guide says to write “email”.</p></div>
+              <div class="scard"><div class="cat"><i style="background:var(--purple)"></i>Style</div><div><s>I would like each of you to</s> → <b>please</b></div><p>Shorter and more direct, as your Concise goal asks.</p></div>
+            </div>
+            <div class="tabpanel" id="pane-ins" role="tabpanel" aria-labelledby="tab-ins" hidden>
+              <div class="insight"><h3>Tone</h3><div class="tonerow">🙏 Appreciative <span class="dots" aria-label="strong"><i class="f"></i><i class="f"></i><i class="f"></i></span></div><div class="tonerow">🎯 Direct <span class="dots" aria-label="moderate"><i class="f"></i><i class="f"></i><i></i></span></div><p>Upbeat and clear, though the long sentence about pricing reads a little impatient.</p></div>
+              <div class="insight"><h3>Readability</h3><div class="big">71</div><div>Fairly easy · grade 7</div><p>1 long sentence highlighted. Sentences over 30 words are hard to follow.</p></div>
+              <div class="insight"><h3>Counts</h3><dl><dt>Words</dt><dd>88</dd><dt>Sentences</dt><dd>7</dd><dt>Reading time</dt><dd>22 sec</dd><dt>Speaking time</dt><dd>41 sec</dd><dt>Vocabulary variety</dt><dd>80%</dd></dl></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ed-notes reveal">
+        <h3>Insights</h3><p>Up to three tones with their intensity, the overall sentiment and a summary, checked by the AI only while the tab is open. Readability (Flesch reading ease and grade level) for English, long sentences highlighted, and counts down to speaking time.</p>
+        <h3>Goals</h3><p>Pick a style, audience, domain and intent for this text from the Goals menu. The editor keeps its own, apart from your per-app goals.</p>
+        <h3>Rewrite</h3><p>The sentence or paragraph at the cursor, or the selection, in any of the 13 styles or as you describe it.</p>
+        <h3>Write with AI</h3><p>Draft from a short request, with the editor’s text as context if you like. It goes in at the cursor or replaces the selection.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<svg class="squiggle reveal" viewBox="0 0 1400 42" preserveAspectRatio="none" aria-hidden="true"><path class="ghost" d="M0 21c35-18 70-18 105 0s70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0"/><path class="run" d="M0 21c35-18 70-18 105 0s70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0"/></svg>
+
+<!-- ===================== Models ===================== -->
+<section class="sec" id="models" aria-labelledby="models-h">
+  <div class="wrap">
+    <p class="kicker reveal">Bring your own brain</p>
+    <h2 id="models-h" class="reveal">Pick the mind behind the <em>squiggle</em>.</h2>
+    <p class="sub reveal">Use Claude, or any of these with your own API key, or a model running on your Mac for zero cost and total privacy. Every one of them handles checks, rewrites, tone and Write with AI. Switch any time in Settings → AI; keys stay in your Keychain, and the usage meter shows what this month cost.</p>
+    <div class="brains">
+      <article class="brain reveal"><div class="who"><b>Claude</b><span class="tag">Anthropic</span></div><p>Haiku for speed, Sonnet or Opus for finer style. Only changed paragraphs are sent, so everyday use stays light.</p></article>
+      <article class="brain reveal"><div class="who"><b>GPT</b><span class="tag">OpenAI</span></div><p>Your OpenAI key, a quick model by default and a stronger one for style.</p></article>
+      <article class="brain reveal"><div class="who"><b>Grok</b><span class="tag">xAI</span></div><p>Grok 4.3 by default, the quickest Grok 4, kept at low reasoning effort.</p></article>
+      <article class="brain reveal"><div class="who"><b>Gemini</b><span class="tag">Google</span></div><p>Through its OpenAI-compatible endpoint with your AI Studio key. Flash-Lite by default.</p></article>
+      <article class="brain reveal"><div class="who"><b>Mistral</b><span class="tag">Mistral AI</span></div><p>Strong in European languages, hosted in the EU.</p></article>
+      <article class="brain reveal"><div class="who"><b>DeepSeek</b><span class="tag">DeepSeek</span></div><p>Very cheap. Read its data policy first; the app links to it.</p></article>
+      <article class="brain local reveal"><div class="who"><b>Local model</b><span class="tag">LM Studio · Ollama</span></div><p>Pick a preset, choose a model, press Test. Around 20–30B parameters is the sweet spot; Qwen3-30B-A3B answers fastest. Nothing leaves your Mac.</p></article>
+    </div>
+    <p class="orbit reveal"><span>Keys live in your Keychain, one per service.</span><span>·</span><span>Settings → AI → Usage keeps counts and an estimated cost, never text.</span></p>
+  </div>
+</section>
+
+<svg class="squiggle reveal" viewBox="0 0 1400 42" preserveAspectRatio="none" aria-hidden="true"><path class="ghost" d="M0 21c35-18 70-18 105 0s70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0"/><path class="run" d="M0 21c35-18 70-18 105 0s70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0"/></svg>
+
+<!-- ===================== Privacy ===================== -->
+<section class="sec" id="privacy" aria-labelledby="privacy-h">
+  <div class="wrap vault">
+    <div>
+      <p class="kicker reveal">The vault</p>
+      <h2 id="privacy-h" class="reveal">Your words stay <em>yours</em>.</h2>
+      <p class="sub reveal">A tool that reads everything you type has to earn that. Grammar Review is built to see as little as possible, and to keep none of it.</p>
+      <ul class="reveal">
+        <li>Password fields are never read. Terminals, password managers and code editors are off by default, and you can switch off any app.</li>
+        <li>Spelling, consistency and your style guide are checked on the Mac. Text is sent only while AI is on: the paragraphs you changed, the text whose tone you asked about, and what you rewrite or draft.</li>
+        <li>It goes only to the AI service you chose, with your own key, or to your local model server. With a model on your Mac, nothing leaves it at all.</li>
+        <li>Only settings and AI request counts are stored on disk, never text. API keys live in the Keychain.</li>
+        <li>Release builds check the project website for updates about once a day. Nothing about you or your text is sent with it.</li>
+      </ul>
+    </div>
+    <figure class="keyhole reveal"><div class="disc" aria-hidden="true"><div class="hole"><span>your<br>text</span></div></div><figcaption>Open source: <a href="https://github.com/modakoda/grammar-review">read how it works</a>.</figcaption></figure>
+  </div>
+</section>
+
+<svg class="squiggle reveal" viewBox="0 0 1400 42" preserveAspectRatio="none" aria-hidden="true"><path class="ghost" d="M0 21c35-18 70-18 105 0s70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0"/><path class="run" d="M0 21c35-18 70-18 105 0s70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0"/></svg>
+
+<!-- ===================== Download ===================== -->
+<section class="sec" id="start" aria-labelledby="start-h">
+  <div class="wrap">
+    <p class="kicker reveal">Wake it up</p>
+    <h2 id="start-h" class="reveal">Up and running in <em>minutes</em>.</h2>
+    <p class="sub reveal" id="startLede">Download the app, drag it to Applications, and a setup guide does the rest.</p>
+    <div class="dl">
+      <div class="dlcard reveal" id="download" data-state="soon">
+        <img src="icon.png" alt="" width="72" height="72">
+        <h3>Grammar Review for Mac</h3>
+        <p class="meta" id="dlMeta">Requires macOS 14 or later</p>
+        <div class="ready-only">
+          <a class="btn btn-lime" href="#download" data-dl>Download .dmg</a>
+          <a class="alt" id="dlZip" href="download/Grammar-Review.zip">or get the .zip</a>
+        </div>
+        <div class="soon-only">
+          <p><span class="soon">First release coming soon.</span> Until then, build it from source: it takes one command (<a href="#source">see below</a>).</p>
+        </div>
+        <p class="alt">Free and open source. Release builds check for updates once installed.</p>
+        <details id="dlSha" hidden><summary>SHA-256 checksums</summary><dl id="dlShaList"></dl><p>To check a download, run <code>shasum -a 256 Grammar-Review.dmg</code> in Terminal and compare.</p></details>
+      </div>
+      <div class="reveal">
+        <ol class="steps" id="dlInstall" data-notarized="true">
+          <li><h3 id="dlStepTitle">Download and install</h3><p id="dlStepText">Open the disk image, drag Grammar Review to Applications and open it from there.</p><p class="unsigned">This build isn’t notarized, so macOS stops it the first time: Control-click the app and choose Open, or click Open Anyway in System Settings → Privacy &amp; Security. Once is enough.</p></li>
+          <li><h3>Allow Accessibility</h3><p>Grammar Review needs it to read and edit text fields. The setup guide sends you to the right switch in System Settings and notices the moment you turn it on.</p></li>
+          <li><h3>Choose your AI, or don’t</h3><p>Paste an API key for Claude, OpenAI, xAI, Gemini, Mistral or DeepSeek; point it at a local model; or skip it and keep spelling only. Then just start typing.</p></li>
+        </ol>
+        <div class="term" id="source">
+          <div class="titlebar bar"><div class="lights" aria-hidden="true"><i></i><i></i><i></i></div><span class="t">Build it yourself</span><button class="copy" type="button" id="copyCmd" aria-label="Copy the commands">Copy</button></div>
+<pre id="cmd"><span class="c"># Needs the Xcode Command Line Tools, not Xcode.</span>
+<span class="p">$</span> git clone https://github.com/modakoda/grammar-review.git
+<span class="p">$</span> cd grammar-review
+<span class="p">$</span> scripts/run.sh</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<svg class="squiggle reveal" viewBox="0 0 1400 42" preserveAspectRatio="none" aria-hidden="true"><path class="ghost" d="M0 21c35-18 70-18 105 0s70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0"/><path class="run" d="M0 21c35-18 70-18 105 0s70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0 70-18 105 0 70 18 105 0"/></svg>
+
+<!-- ===================== FAQ ===================== -->
+<section class="sec" id="faq" aria-labelledby="faq-h">
+  <div class="wrap">
+    <p class="kicker reveal">Good questions</p>
+    <h2 id="faq-h" class="reveal">Asked before you <em>asked</em>.</h2>
+    <div class="faq reveal">
+      <details><summary>What does it cost?</summary><div class="a"><p>The app is free and open source. Spelling, consistency and the style guide cost nothing. AI suggestions use either your own API key, billed by that service for what you use, or a local model, which costs nothing at all.</p><p>Settings → AI → Usage shows this month’s requests, tokens and an estimated cost at the service’s list prices.</p></div></details>
+      <details><summary>Which apps does it work in?</summary><div class="a"><p>Any app that exposes its text to macOS Accessibility: native Mac apps, Safari, Chrome and other Chromium browsers, and Electron apps. When an app refuses edits, Grammar Review pastes the fix instead and restores your clipboard afterwards.</p><p>Canvas-based editors that draw their own text, like Google Docs, don’t expose it, so they get nothing. Where an app reports text positions wrongly, you still get the badge and the panel.</p></div></details>
+      <details><summary>Does it work in my language?</summary><div class="a"><p>Spelling works in every language your Mac has a dictionary for. AI suggestions detect the language automatically, or you can fix it in Settings, and the fix always stays in your language. The large hosted models handle many languages well; small local models are best in English.</p></div></details>
+      <details><summary>Where does my text go?</summary><div class="a"><p>Nowhere, unless AI is on. Then the paragraphs you changed (up to 6,000 characters by default), the text whose tone you asked about, and what you rewrite or draft go to the service you chose with your own key, or to your local model server. Password fields and apps you switched off are never read. Only settings and request counts are saved on disk.</p></div></details>
+      <details><summary>Can my team share a style guide?</summary><div class="a"><p>Yes. Add rules in Settings → Style Guide, then Export them as CSV or JSON. Teammates click Import…; an imported rule replaces one for the same term. Rules are checked offline in every app and win over AI suggestions.</p></div></details>
+      <details><summary>Does Write with AI make things up?</summary><div class="a"><p>It’s told never to invent facts it wasn’t given, like dates, prices, numbers or names. Instead it leaves a placeholder such as [date] for you to fill in. Nothing goes into your text until you press Insert or Replace.</p></div></details>
+      <details><summary>Why isn’t it in the App Store?</summary><div class="a"><p>The App Store sandbox doesn’t allow an app to read and edit text fields in other apps, which is the whole point of Grammar Review.</p></div></details>
+      <details><summary>macOS says it can’t open the app</summary><div class="a"><p>Notarized releases open normally. If a build isn’t notarized, macOS stops it the first time: Control-click the app in Applications and choose Open, or click Open Anyway in System Settings → Privacy &amp; Security. You only need to do this once.</p></div></details>
+      <details><summary>It keeps asking for Accessibility again</summary><div class="a"><p>macOS ties the permission to the app’s code signature, and every unsigned rebuild gets a new one. Click Reset Permission in the setup guide and switch it on again. If you build from source, run <code>scripts/setup-signing.sh</code> once to stop it happening after each rebuild.</p></div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Final ===================== -->
+<section class="final" aria-labelledby="final-h">
+  <div class="wrap">
+    <span class="moonbig reveal" aria-hidden="true"></span>
+    <h2 id="final-h" class="reveal">Write like you proofread. <em>Without proofreading.</em></h2>
+    <p class="sub reveal" style="margin-inline:auto">Free, native and private. Your next email deserves it.</p>
+    <p class="cta reveal" style="justify-content:center"><a class="btn btn-lime" href="#download" data-dl>Download for Mac</a><a class="btn btn-ghost" href="https://github.com/modakoda/grammar-review">Source on GitHub</a></p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span><img src="favicon.png" alt="" width="18" height="18" style="display:inline-block;vertical-align:-4px;margin-right:8px">Grammar Review · free and open source for macOS</span>
+    <nav aria-label="Footer"><a href="https://github.com/modakoda/grammar-review">GitHub</a><a href="https://github.com/modakoda/grammar-review/blob/main/README.md">README</a><a href="#privacy">Privacy</a><a href="#download">Download</a></nav>
+  </div>
+</footer>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wait = (ms) => new Promise((res) => setTimeout(res, reduceMotion ? 0 : ms));
+
+  /* ---------- Scroll reveal, and the squiggles that draw themselves ---------- */
+  const toReveal = $$('.reveal');
+  if ('IntersectionObserver' in window && !reduceMotion) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    toReveal.forEach((el) => io.observe(el));
+  } else {
+    toReveal.forEach((el) => el.classList.add('in'));
+  }
+
+  /* ---------- The headline heals itself ---------- */
+  const heal = $('#heal');
+  async function playHeal() {
+    heal.classList.remove('fixed');
+    await wait(1400);
+    heal.classList.add('fixed');
+  }
+  playHeal();
+  $('#replayHeal').addEventListener('click', playHeal);
+
+  /* ---------- Parallax: the paper drifts away from the pointer ---------- */
+  const papers = $$('.paper, .door');
+  if (!reduceMotion && window.matchMedia('(pointer: fine)').matches) {
+    let raf = 0;
+    window.addEventListener('pointermove', (e) => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        const dx = (e.clientX / window.innerWidth - 0.5);
+        const dy = (e.clientY / window.innerHeight - 0.5);
+        papers.forEach((p, i) => {
+          const depth = 8 + i * 6;
+          p.style.setProperty('--px', `${-dx * depth}px`);
+          p.style.setProperty('--py', `${-dy * depth}px`);
+          p.style.translate = `var(--px) var(--py)`;
+        });
+      });
+    }, { passive: true });
+  }
+
+  /* ---------- Live demo: a mail that corrects itself ---------- */
+  // Each issue: the exact text in the field, the fix, the category and why. Written for this page.
+  const SEV = { spelling: 'correctness', grammar: 'correctness', punctuation: 'correctness', wordChoice: 'clarity', clarity: 'clarity', style: 'style' };
+  const CAT = { spelling: 'Spelling', grammar: 'Grammar', punctuation: 'Punctuation', wordChoice: 'Word choice', clarity: 'Clarity', style: 'Style' };
+  const TEXT = 'Hi all, the release past every test we ran this week, so we can ship on thursday. Their were a few small issues in the e-mail templates, but at this point in time they are all fixed. Its a really very unique milestone for the team — thank you!';
+  const ISSUES = [
+    { id: 'i1', text: 'past', fix: 'passed', cat: 'grammar', why: '“Passed” is the verb you need here.' },
+    { id: 'i2', text: 'thursday', fix: 'Thursday', cat: 'spelling', why: 'Days of the week take a capital.' },
+    { id: 'i3', text: 'Their were', fix: 'There were', cat: 'grammar', why: '“There” introduces the sentence; “their” shows possession.' },
+    { id: 'i4', text: 'e-mail', fix: 'email', cat: 'wordChoice', why: 'Your style guide says to write “email”.' },
+    { id: 'i5', text: 'at this point in time', fix: 'now', cat: 'clarity', why: 'Five words doing the work of one.' },
+    { id: 'i6', text: 'Its', fix: 'It’s', cat: 'punctuation', why: '“It’s” is short for “it is”.' },
+    { id: 'i7', text: 'really very unique', fix: 'unique', cat: 'style', why: '“Unique” doesn’t take degrees.' },
+  ];
+  const fieldText = $('#fieldText'), badge = $('#badge'), badgeCount = $('#badgeCount'), card = $('#card');
+  const panelList = $('#panelList'), ignoredBox = $('#ignored'), ignoredList = $('#ignoredList'), toneLine = $('#toneLine'), panelTitle = $('#panelTitle');
+  const fixAllBtn = $('#fixAll');
+  let state;
+
+  function colour(cat) { return `var(--${SEV[cat] === 'correctness' ? 'red' : SEV[cat] === 'clarity' ? 'blue' : 'purple'})`; }
+
+  function render() {
+    // The field, rebuilt from the original text: open issues become underlined spans, fixed ones
+    // read as their fix, ignored ones as plain text. ISSUES is in text order.
+    fieldText.textContent = '';
+    let cursor = 0;
+    for (const iss of ISSUES) {
+      const at = TEXT.indexOf(iss.text, cursor);
+      if (at < 0) continue;
+      fieldText.append(document.createTextNode(TEXT.slice(cursor, at)));
+      if (state.open.has(iss.id)) {
+        const span = document.createElement('span');
+        span.className = 'iss';
+        span.dataset.id = iss.id;
+        span.dataset.sev = SEV[iss.cat];
+        span.tabIndex = 0;
+        span.setAttribute('role', 'button');
+        span.setAttribute('aria-label', `${CAT[iss.cat]}: ${iss.text}. Suggested: ${iss.fix}`);
+        span.textContent = iss.text;
+        fieldText.append(span);
+      } else {
+        fieldText.append(document.createTextNode(state.fixed.has(iss.id) ? iss.fix : iss.text));
+      }
+      cursor = at + iss.text.length;
+    }
+    fieldText.append(document.createTextNode(TEXT.slice(cursor)));
+    const open = ISSUES.filter((i) => state.open.has(i.id));
+
+    const count = open.length;
+    badgeCount.textContent = count;
+    badge.classList.toggle('ok', count === 0);
+    badge.setAttribute('aria-label', count ? `${count} suggestions` : 'No suggestions');
+    panelTitle.textContent = count === 0 ? 'No suggestions' : count === 1 ? '1 suggestion' : `${count} suggestions`;
+    const reds = open.filter((i) => SEV[i.cat] === 'correctness').length;
+    fixAllBtn.hidden = reds === 0;
+    fixAllBtn.textContent = `Fix all (${reds})`;
+
+    panelList.textContent = '';
+    if (count === 0) {
+      const li = document.createElement('li');
+      li.className = 'empty';
+      li.textContent = 'Looks good!';
+      panelList.append(li);
+    }
+    for (const iss of open) {
+      const li = document.createElement('li');
+      li.innerHTML = `<div class="cat"><i style="background:${colour(iss.cat)}"></i>${CAT[iss.cat]}</div><div class="fix"><s></s> → <b></b></div><div class="acts"><button class="pill go" type="button" data-accept="${iss.id}">Accept</button><button class="pill" type="button" data-ignore="${iss.id}">Ignore</button></div>`;
+      li.querySelector('s').textContent = iss.text;
+      li.querySelector('b').textContent = iss.fix;
+      panelList.append(li);
+    }
+    ignoredList.textContent = '';
+    const ignored = ISSUES.filter((i) => state.ignored.has(i.id));
+    ignoredBox.hidden = ignored.length === 0;
+    for (const iss of ignored) {
+      const li = document.createElement('li');
+      li.innerHTML = `<span><s></s> → <b></b></span><button class="pill" type="button" data-restore="${iss.id}">Restore</button>`;
+      li.querySelector('s').textContent = iss.text;
+      li.querySelector('b').textContent = iss.fix;
+      ignoredList.append(li);
+    }
+  }
+
+  function showCard(span) {
+    const iss = ISSUES.find((i) => i.id === span.dataset.id);
+    if (!iss) return;
+    $$('.iss.on', fieldText).forEach((s) => s.classList.remove('on'));
+    span.classList.add('on');
+    card.innerHTML = `<div class="cat"><i style="background:${colour(iss.cat)}"></i>${CAT[iss.cat]}</div><p class="why"></p><div class="fix"><s></s> → <b></b></div><div class="acts"><button class="pill go" type="button" data-accept="${iss.id}">Accept</button><button class="pill" type="button" data-ignore="${iss.id}">Ignore</button></div>`;
+    card.querySelector('.why').textContent = iss.why;
+    card.querySelector('s').textContent = iss.text;
+    card.querySelector('b').textContent = iss.fix;
+    const field = $('#field');
+    const fr = field.getBoundingClientRect(), sr = span.getBoundingClientRect();
+    const left = Math.max(0, Math.min(sr.left - fr.left, fr.width - 310));
+    card.style.left = `${left}px`;
+    card.style.top = `${sr.bottom - fr.top + 8}px`;
+    card.hidden = false;
+  }
+  function hideCard() { card.hidden = true; $$('.iss.on', fieldText).forEach((s) => s.classList.remove('on')); }
+
+  async function accept(id) {
+    const span = fieldText.querySelector(`.iss[data-id="${id}"]`);
+    const iss = ISSUES.find((i) => i.id === id);
+    hideCard();
+    if (span && iss) {
+      span.textContent = iss.fix;
+      span.classList.add('healed');
+      await wait(650);
+    }
+    state.open.delete(id);
+    state.fixed.add(id);
+    render();
+  }
+  function ignore(id) { hideCard(); state.open.delete(id); state.ignored.add(id); render(); }
+  function restore(id) { state.ignored.delete(id); state.open.add(id); render(); }
+
+  async function detectTone() {
+    toneLine.innerHTML = 'Sounds <span class="sr">detecting</span>…';
+    await wait(900);
+    toneLine.innerHTML = 'Sounds <b>🙏 Appreciative</b> · <b>🤗 Friendly</b>';
+    toneLine.title = 'Warm and proud of the team, with one impatient sentence.';
+  }
+
+  function reset() {
+    state = { open: new Set(ISSUES.map((i) => i.id)), fixed: new Set(), ignored: new Set() };
+    hideCard();
+    render();
+    detectTone();
+  }
+
+  fieldText.addEventListener('click', (e) => { const s = e.target.closest('.iss'); if (s && !s.classList.contains('healed')) showCard(s); });
+  fieldText.addEventListener('mouseover', (e) => { const s = e.target.closest('.iss'); if (s && !s.classList.contains('healed')) showCard(s); });
+  fieldText.addEventListener('keydown', (e) => { const s = e.target.closest('.iss'); if (s && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); showCard(s); } });
+  document.addEventListener('click', (e) => { if (!e.target.closest('#field')) hideCard(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideCard(); });
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('[data-accept]'), i = e.target.closest('[data-ignore]'), r = e.target.closest('[data-restore]');
+    if (a) accept(a.dataset.accept);
+    else if (i) ignore(i.dataset.ignore);
+    else if (r) restore(r.dataset.restore);
+  });
+  fixAllBtn.addEventListener('click', async () => {
+    const reds = ISSUES.filter((i) => state.open.has(i.id) && SEV[i.cat] === 'correctness');
+    for (const iss of reds) { await accept(iss.id); }
+  });
+  badge.addEventListener('click', () => $('#panel').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' }));
+  $('#replayDemo').addEventListener('click', reset);
+  reset();
+
+  /* ---------- Editor tabs ---------- */
+  const tabs = $$('[role="tab"]');
+  function selectTab(tab) {
+    tabs.forEach((t) => {
+      const on = t === tab;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      $('#' + t.getAttribute('aria-controls')).hidden = !on;
+    });
+    tab.focus({ preventScroll: true });
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => selectTab(t));
+    t.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); selectTab(tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]); }
+    });
+  });
+
+  /* ---------- Copy the build commands ---------- */
+  const copyBtn = $('#copyCmd');
+  copyBtn.addEventListener('click', async () => {
+    const text = $$('#cmd .p').map((p) => p.nextSibling.textContent.trim()).join('\n');
+    try { await navigator.clipboard.writeText(text); copyBtn.textContent = 'Copied'; }
+    catch { copyBtn.textContent = 'Select & copy'; }
+    setTimeout(() => { copyBtn.textContent = 'Copy'; }, 1600);
+  });
+
+  /* ---------- Download: the latest release, from download/latest.json ---------- */
+  // Before the first release (and in local previews) there is no latest.json, or its version is
+  // null: the page then says the first release is coming and points to building from source.
+  const DMG = 'download/Grammar-Review.dmg';
+  const dlCard = $('#download'), dlMeta = $('#dlMeta'), dlZip = $('#dlZip'), heroDlMeta = $('#heroDlMeta');
+  const dlInstall = $('#dlInstall'), dlStepTitle = $('#dlStepTitle'), dlStepText = $('#dlStepText');
+  const dlSha = $('#dlSha'), dlShaList = $('#dlShaList'), dlButtons = $$('[data-dl]');
+  const systemLine = (v) => {
+    const m = /^(\d+)(?:\.(\d+))?/.exec(String(v || '14'));
+    return `macOS ${m ? m[1] + (m[2] && m[2] !== '0' ? '.' + m[2] : '') : '14'} or later`;
+  };
+  const sizeLine = (bytes) => {
+    const b = Number(bytes);
+    if (!Number.isFinite(b) || b <= 0) return '';
+    return b >= 1e6 ? `${(b / 1e6).toFixed(b >= 1e8 ? 0 : 1)} MB` : `${Math.max(1, Math.round(b / 1e3))} KB`;
+  };
+  const isRelease = (info) => info && typeof info === 'object' && typeof info.version === 'string' && /^[\w.+-]{1,40}$/.test(info.version);
+
+  function releaseSoon() {
+    dlCard.dataset.state = 'soon';
+    dlMeta.textContent = 'Requires macOS 14 or later';
+    heroDlMeta.innerHTML = 'Requires macOS 14 or later · <span class="soon">First release coming soon</span>';
+    $('#startLede').textContent = 'The first release is on its way. Until then, one script builds the app, and a setup guide does the rest.';
+    dlStepTitle.textContent = 'Build and open';
+    dlStepText.innerHTML = 'The first release is coming soon. Until then, clone the repository and run <code>scripts/run.sh</code> (<a href="#source">see below</a>). You only need the Xcode Command Line Tools, not Xcode.';
+    dlInstall.dataset.notarized = 'true';
+  }
+
+  function releaseReady(info) {
+    const files = info.files && typeof info.files === 'object' ? info.files : {};
+    const meta = [`Version ${info.version}`, systemLine(info.minimumSystemVersion), sizeLine(files.dmg && files.dmg.size)].filter(Boolean).join(' · ');
+    dlCard.dataset.state = 'ready';
+    dlMeta.textContent = meta;
+    heroDlMeta.textContent = meta;
+    const zipSize = sizeLine(files.zip && files.zip.size);
+    dlZip.textContent = zipSize ? `or get the .zip (${zipSize})` : 'or get the .zip';
+    // Only a notarized build opens without the one-time Open Anyway step.
+    dlInstall.dataset.notarized = String(info.notarized === true);
+    dlButtons.forEach((a) => {
+      a.href = DMG;
+      a.setAttribute('download', '');
+      // Show the install steps while the download starts.
+      a.addEventListener('click', () => {
+        setTimeout(() => $('#start').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' }), 50);
+      });
+    });
+    const sums = ['dmg', 'zip'].map((k) => [k, files[k]]).filter(([, f]) => f && /^[0-9a-f]{64}$/i.test(String(f.sha256 || '')));
+    if (sums.length) {
+      dlShaList.textContent = '';
+      sums.forEach(([k, f]) => {
+        const dt = document.createElement('dt');
+        dt.textContent = typeof f.name === 'string' && f.name ? f.name : `Grammar-Review.${k}`;
+        const dd = document.createElement('dd');
+        const code = document.createElement('code');
+        code.textContent = f.sha256.toLowerCase();
+        dd.appendChild(code);
+        dlShaList.append(dt, dd);
+      });
+      dlSha.hidden = false;
+    }
+  }
+
+  if (window.fetch && location.protocol !== 'file:') {
+    fetch('download/latest.json', { cache: 'no-cache' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((info) => (isRelease(info) ? releaseReady(info) : releaseSoon()))
+      .catch(releaseSoon);
+  } else {
+    releaseSoon();
+  }
+})();
+</script>
+</body>
+</html>

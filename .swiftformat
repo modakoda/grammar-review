@@ -1,0 +1,27 @@
+# SwiftFormat (https://github.com/nicklockwood/SwiftFormat). Run scripts/format.sh to apply,
+# scripts/lint.sh to check. Options follow the code's existing style: 4-space indent, no line
+# length limit, and wrapping left to the author.
+
+--swift-version 6.2
+--min-version 0.64.0
+--exclude .build,.build-*,.swiftpm,build,.claude,site,docs
+
+--indent 4
+--max-width none
+--ranges no-space
+--import-grouping testable-last
+--trailing-commas collections-only
+--strip-unused-args closure-only
+--decimal-grouping ignore
+--wrap-arguments preserve
+--wrap-parameters preserve
+--wrap-collections preserve
+--wrap-conditions preserve
+
+# Single-line bodies (`guard x else { return }`, `if done { break }`) are house style.
+--disable wrapIfStatementBodies,wrapIfExpressionBodies,wrapPropertyBodies,wrapLoopBodies,wrapFunctionBodies
+--disable wrapMultilineStatementBraces
+# Rewrites that change code the author wrote on purpose, not just its layout.
+--disable redundantSelf,hoistPatternLet,hoistTry,hoistAwait,modifierOrder,extensionAccessControl,docComments
+--disable redundantMemberwiseInit,repeatedGuard,conditionalAssignment
+--disable swiftTestingTestCaseNames,redundantSwiftTestingSuite,noForceUnwrapInTests

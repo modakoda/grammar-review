@@ -1,0 +1,55 @@
+# Tests the landing page on every change to it: structure and facts without a browser
+# (scripts/test-site.py), then the demos and the download states in headless Chromium at desktop
+# and phone widths (site/tests, Playwright). pages.yml runs the first part again before deploying.
+name: Website
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - "scripts/test-site.py"
+      - ".github/workflows/site.yml"
+  pull_request:
+    paths:
+      - "site/**"
+      - "scripts/test-site.py"
+      - ".github/workflows/site.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  site:
+    name: Landing page
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/tests/package-lock.json
+      - name: Structure, links and facts
+        run: python3 scripts/test-site.py
+      - name: Install Playwright
+        working-directory: site/tests
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Browser tests
+        working-directory: site/tests
+        run: npx playwright test
+      - name: Keep the report and screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: site-test-results
+          path: |
+            site/tests/test-results
+            site/tests/playwright-report
+          if-no-files-found: ignore
+          retention-days: 14

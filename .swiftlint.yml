@@ -1,0 +1,96 @@
+# SwiftLint (https://github.com/realm/SwiftLint). scripts/lint.sh runs it with --strict, so
+# warnings fail too. Tests/.swiftlint.yml relaxes a few rules for test code.
+
+included:
+  - Sources
+  - Tests
+  - Package.swift
+
+disabled_rules:
+  - trailing_comma # SwiftFormat owns trailing commas
+
+opt_in_rules:
+  - array_init
+  - closure_spacing
+  - contains_over_filter_count
+  - contains_over_filter_is_empty
+  - contains_over_first_not_nil
+  - contains_over_range_nil_comparison
+  - discouraged_object_literal
+  - empty_collection_literal
+  - empty_count
+  - empty_string
+  - explicit_init
+  - fallthrough
+  - fatal_error_message
+  - first_where
+  - flatmap_over_map_reduce
+  - force_unwrapping
+  - identical_operands
+  - implicitly_unwrapped_optional
+  - joined_default_parameter
+  - last_where
+  - legacy_multiple
+  - lower_acl_than_parent
+  - optional_enum_case_matching
+  - overridden_super_call
+  - prefer_self_type_over_type_of_self
+  - private_action
+  - private_outlet
+  - reduce_into
+  - redundant_type_annotation
+  - sorted_first_last
+  - static_operator
+  - toggle_bool
+  - unavailable_function
+  - unneeded_parentheses_in_closure_argument
+  - unowned_variable_capture
+  - vertical_whitespace_closing_braces
+  - vertical_whitespace_opening_braces
+  - weak_delegate
+  - yoda_condition
+
+# Short names are idiomatic for geometry and locals here (x, dx, ns, a/b in comparators).
+identifier_name:
+  min_length: 1
+  max_length: 60
+  allowed_symbols: ["_"]
+
+# Codable wire formats nest their payload types.
+nesting:
+  type_level: 3
+
+large_tuple:
+  warning: 4
+  error: 5
+
+# Prose (prompts, onboarding copy) stays on one line, so lines that start with a string literal,
+# alone or as the first argument (`Text("…`), are exempt.
+line_length:
+  warning: 200
+  error: 300
+  ignores_comments: true
+  ignores_urls: true
+  ignores_interpolated_strings: true
+  ignores_multiline_strings: true
+  excluded_lines_patterns:
+    - '^\s*(\w+\()?"'
+
+# Size limits: generous enough for today's largest files, so they stop further growth.
+cyclomatic_complexity:
+  warning: 15
+  error: 25
+  ignores_case_statements: true
+
+function_body_length:
+  warning: 80
+  error: 150
+
+type_body_length:
+  warning: 450
+  error: 700
+
+file_length:
+  warning: 650
+  error: 1000
+  ignore_comment_only_lines: true
