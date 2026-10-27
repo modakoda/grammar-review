@@ -10,9 +10,10 @@ import Testing
     let singleLine = CGRect(x: 100, y: 300, width: 500, height: 24)
     let textArea = CGRect(x: 100, y: 300, width: 500, height: 200)
 
-    @Test func automaticKeepsTheBadgeInsideALargeField() {
+    @Test func automaticPutsTheBadgeLeftOfATextArea() {
         let circle = BadgeLayout.circleFrame(fieldFrame: textArea, placement: .automatic, screens: [primaryScreen])
-        #expect(circle == BadgeLayout.circleFrame(fieldFrame: textArea, placement: .insideBottomLeft, screens: [primaryScreen]))
+        #expect(circle == CGRect(x: textArea.minX - gap - d, y: textArea.minY + inset, width: d, height: d))
+        #expect(!circle.intersects(textArea))
     }
 
     @Test func automaticMovesTheBadgeBesideASingleLineField() {
@@ -22,16 +23,12 @@ import Testing
         #expect(!circle.intersects(singleLine))
     }
 
-    @Test func automaticTreatsShortAndNarrowFieldsAsSmall() {
-        let outside: [BadgeLayout.Spot] = [.left, .right, .below, .above, .insideBottomLeft]
-        #expect(BadgeLayout.candidates(for: .automatic, fieldFrame: CGRect(x: 0, y: 0, width: 500, height: 40)) == outside)
-        #expect(BadgeLayout.candidates(for: .automatic, fieldFrame: CGRect(x: 0, y: 0, width: 20, height: 200)) == outside)
-        #expect(BadgeLayout.candidates(for: .automatic, fieldFrame: CGRect(x: 0, y: 0, width: 500, height: 60)) == [.insideBottomLeft])
+    @Test func automaticFallsBackLikeLeft() {
+        #expect(BadgeLayout.candidates(for: .automatic) == BadgeLayout.candidates(for: .left))
     }
 
     @Test func automaticPutsTheBadgeLeftOfAnInputFieldOfAnyHeight() {
         let input = CGRect(x: 100, y: 300, width: 500, height: 80)
-        #expect(BadgeLayout.candidates(for: .automatic, fieldFrame: input, isSingleLine: true) == [.left, .right, .below, .above, .insideBottomLeft])
         let circle = BadgeLayout.circleFrame(fieldFrame: input, isSingleLine: true, placement: .automatic, screens: [primaryScreen])
         #expect(circle.maxX == input.minX - gap)
         #expect(circle.midY == input.midY)
@@ -45,13 +42,13 @@ import Testing
     }
 
     @Test func insidePlacementsNeverMoveOutside() {
-        #expect(BadgeLayout.candidates(for: .insideTopLeft, fieldFrame: singleLine) == [.insideTopLeft])
-        #expect(BadgeLayout.candidates(for: .insideBottomRight, fieldFrame: singleLine) == [.insideBottomRight])
+        #expect(BadgeLayout.candidates(for: .insideTopLeft) == [.insideTopLeft])
+        #expect(BadgeLayout.candidates(for: .insideBottomRight) == [.insideBottomRight])
     }
 
     @Test func outsidePlacementsFallBackInsideAtTheirOwnCorner() {
-        #expect(BadgeLayout.candidates(for: .left, fieldFrame: singleLine) == [.left, .right, .below, .above, .insideBottomLeft])
-        #expect(BadgeLayout.candidates(for: .above, fieldFrame: singleLine) == [.above, .right, .below, .left, .insideTopRight])
+        #expect(BadgeLayout.candidates(for: .left) == [.left, .right, .below, .above, .insideBottomLeft])
+        #expect(BadgeLayout.candidates(for: .above) == [.above, .right, .below, .left, .insideTopRight])
     }
 
     @Test func insideCornersHugTheirCorner() {

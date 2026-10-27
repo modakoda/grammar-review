@@ -42,8 +42,7 @@ nonisolated enum BadgeLayout {
             .map { $0.visibleFrame.insetBy(dx: margin, dy: margin) }
             .flatMap { $0.isDrawable ? $0 : nil }
 
-        let spots = candidates(for: placement, fieldFrame: fieldFrame, isSingleLine: isSingleLine, diameter: diameter, inset: inset)
-        for spot in spots {
+        for spot in candidates(for: placement) {
             var circle = frame(at: spot, fieldFrame: fieldFrame, diameter: diameter, inset: inset, gap: gap)
             if isSingleLine, spot.offset == .outsideSideways {
                 circle.origin.y = fieldFrame.midY - diameter / 2
@@ -55,38 +54,21 @@ nonisolated enum BadgeLayout {
         return frame(at: .insideBottomRight, fieldFrame: fieldFrame, diameter: diameter, inset: inset, gap: gap)
     }
 
-    static func candidates(
-        for placement: BadgePlacement,
-        fieldFrame: CGRect,
-        isSingleLine: Bool = false,
-        diameter: CGFloat = OverlayMetrics.badgeDiameter,
-        inset: CGFloat = OverlayMetrics.badgeInset
-    ) -> [Spot] {
+    static func candidates(for placement: BadgePlacement) -> [Spot] {
         switch placement {
         case .insideBottomRight: [.insideBottomRight]
         case .insideTopRight: [.insideTopRight]
         case .insideBottomLeft: [.insideBottomLeft]
         case .insideTopLeft: [.insideTopLeft]
         case .right: outside(preferring: .right)
-        case .left: outside(preferring: .left)
+        case .left, .automatic: outside(preferring: .left)
         case .above: outside(preferring: .above)
         case .below: outside(preferring: .below)
-        case .automatic:
-            !isSingleLine && isRoomyEnough(fieldFrame, diameter: diameter, inset: inset)
-                ? [.insideBottomLeft] : outside(preferring: .left)
         }
     }
 
     private static func outside(preferring preferred: Spot) -> [Spot] {
         [preferred] + [Spot.right, .below, .above, .left].filter { $0 != preferred } + [preferred.inside]
-    }
-
-    static func isRoomyEnough(
-        _ fieldFrame: CGRect,
-        diameter: CGFloat = OverlayMetrics.badgeDiameter,
-        inset: CGFloat = OverlayMetrics.badgeInset
-    ) -> Bool {
-        fieldFrame.height >= OverlayMetrics.badgeInsideMinFieldHeight && fieldFrame.width >= diameter + 2 * inset
     }
 
     private static func frame(at spot: Spot, fieldFrame: CGRect, diameter: CGFloat, inset: CGFloat, gap: CGFloat) -> CGRect {

@@ -54,8 +54,7 @@ public enum BadgePlacement: String, Codable, Sendable, CaseIterable, Identifiabl
 
     public func detail(for kind: FieldKind) -> String {
         switch (self, kind) {
-        case (.automatic, .input): "Left of the field, so it doesn't cover what you type."
-        case (.automatic, .textArea): "Inside the bottom-left corner; left of text areas too small for it."
+        case (.automatic, _): "Left of the field, so it doesn't cover what you type."
         case (.insideBottomRight, .input), (.insideTopRight, .input): "It can cover the end of the text."
         case (.insideBottomLeft, .input), (.insideTopLeft, .input): "It can cover the start of the text."
         case (.insideBottomRight, .textArea): "It can cover the end of the last line."

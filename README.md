@@ -138,7 +138,7 @@ dotnet publish windows/src/GrammarReview.Windows -c Release -r win-x64 --self-co
 | Apply / ignore | Click the replacement, or *Ignore* / *Add to dictionary* in the card |
 | All suggestions | Click the badge on or beside the field, or press `⌃⌥G` |
 | Undo an ignore | The suggestions panel lists ignored suggestions at the bottom; click *Restore* |
-| Move the badge | Right-click the badge and pick a position for that kind of field, or set one for *Input fields* and one for *Text areas* in Settings → General → *Badge*: any inside corner of the field, right, left, above or below it, or automatic (left of input fields so it doesn't cover the text, inside the bottom-left corner of large text areas) |
+| Move the badge | Right-click the badge and pick a position for that kind of field, or set one for *Input fields* and one for *Text areas* in Settings → General → *Badge*: any inside corner of the field, right, left, above or below it, or automatic (left of the field so it doesn't cover the text) |
 | Badge spacing | Right-click the badge → *Distance from the Field*, or Settings → General → *Badge* → *Distance from the field*: how far the badge sits from the field when it's outside it |
 | Rewrite selection | Select text, press `⌃⌥R`, pick a style or click *Describe a change…* and type one, *Replace* |
 | Rephrase a sentence | Put the cursor in it and press `⌃⌥R` with nothing selected, or click *Rephrase sentence* on a suggestion. It's said another way; pick a style (formal, friendly, concise…) to rephrase it in that style, then *Replace*. In the editor: *Rewrite* → *Rephrase Sentence* |

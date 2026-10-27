@@ -10,7 +10,6 @@ nonisolated enum OverlayMetrics {
     static let badgeDiameter: CGFloat = 22
     static let badgeInset: CGFloat = 6
     static let badgeOutsideGap: CGFloat = 8
-    static let badgeInsideMinFieldHeight: CGFloat = 56
     static let badgePadding: CGFloat = 4
 
     static let cardWidth: CGFloat = 300
